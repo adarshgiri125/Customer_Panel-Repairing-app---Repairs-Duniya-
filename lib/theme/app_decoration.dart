@@ -48,6 +48,14 @@ class AppDecoration {
           ],
         ),
       );
+
+      static BoxDecoration get outlineGray => BoxDecoration(
+        color: theme.colorScheme.onError.withOpacity(1),
+        border: Border.all(
+          color: appTheme.gray900,
+          width: 1.h,
+        ),
+      );
   static BoxDecoration get gradientOrangeAToErrorContainer => BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment(1, 0.91),

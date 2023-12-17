@@ -50,11 +50,23 @@ class ImageConstant {
 
   static String imgImage47 = '$imagePath/img_image_47.png';
 
+  static String imgImage53 = '$imagePath/img_image_53.png';
+
+  static String imgImage38126x382 = '$imagePath/img_image_38_126x382.png';
+
   static String imgFrame5140267 = '$imagePath/img_frame_5140267.svg';
 
   static String imgImage50 = '$imagePath/img_image_50.png';
 
   static String imgImage51 = '$imagePath/img_image_51.png';
+  
+  static String imgImage54 = '$imagePath/img_image_54.png';
+
+  static String imgImage55 = '$imagePath/img_image_55.png';
+
+  static String imgImage56 = '$imagePath/img_image_56.png';
+
+  
 
   // Log in Two images
   static String imgEllipse12 = '$imagePath/img_ellipse_12.png';

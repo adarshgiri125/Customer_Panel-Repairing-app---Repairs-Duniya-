@@ -1,3 +1,5 @@
+import 'package:customer_app/presentation/repair_service/service_repair_screen.dart';
+
 import '../home_page_screen/widgets/homepagestaggered_item_widget.dart';
 import 'package:customer_app/core/app_export.dart';
 import 'package:customer_app/widgets/custom_elevated_button.dart';
@@ -208,32 +210,41 @@ class HomePageScreen extends StatelessWidget {
       {"imagePath": ImageConstant.imgImage32, "itemName": "Oven"},
       {"imagePath": ImageConstant.imgImage29, "itemName": "Microwave"},
       {"imagePath": ImageConstant.imgImage31, "itemName": "Washing Machine"},
-
       // Add more items as needed
     ];
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.h), // Add padding here
-      child: StaggeredGridView.countBuilder(
-        shrinkWrap: true,
-        primary: false,
-        crossAxisCount: 8,
-        crossAxisSpacing: 16.h,
-        mainAxisSpacing: 16.h,
-        staggeredTileBuilder: (index) {
-          return StaggeredTile.fit(2);
-        },
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          // Access the current item's data
-          Map<String, dynamic> currentItem = items[index];
+    return StaggeredGridView.countBuilder(
+      shrinkWrap: true,
+      primary: false,
+      crossAxisCount: 8,
+      crossAxisSpacing: 16.h,
+      mainAxisSpacing: 16.h,
+      staggeredTileBuilder: (index) {
+        return StaggeredTile.fit(2);
+      },
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        Map<String, dynamic> currentItem = items[index];
 
-          return HomepagestaggeredItemWidget(
+        return GestureDetector(
+          onTap: () {
+            // Navigate to the AcServiceRepairScreen and pass the data
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AcServiceRepairScreen(
+                  imagePath: currentItem["imagePath"],
+                  itemName: currentItem["itemName"],
+                ),
+              ),
+            );
+          },
+          child: HomepagestaggeredItemWidget(
             imagePath: currentItem["imagePath"],
             itemName: currentItem["itemName"],
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -439,10 +450,14 @@ class HomePageScreen extends StatelessWidget {
 
   /// Section Widget
   Widget _buildHomePageColumn(BuildContext context) {
+    bool shouldShowExtraWidgets =
+        true; // Set this condition based on your requirements
+
     return Align(
       alignment: Alignment.center,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 25.h),
+        height: 130,
         decoration: AppDecoration.gradientOnPrimaryContainerToOnError.copyWith(
           borderRadius: BorderRadiusStyle.roundedBorder7,
         ),
@@ -511,39 +526,43 @@ class HomePageScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: Container(
-                            margin: EdgeInsets.only(top: 129.v),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 170.h,
-                              vertical: 9.v,
-                            ),
-                            decoration: AppDecoration.fillOnError.copyWith(
-                              borderRadius: BorderRadiusStyle.customBorderBL10,
-                            ),
-                            child: CustomImageView(
-                              imagePath: ImageConstant.imgFrame5140267,
-                              height: 12.v,
-                              width: 37.h,
+                        if (shouldShowExtraWidgets)
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: Container(
+                              margin: EdgeInsets.only(top: 129.v),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 170.h,
+                                vertical: 9.v,
+                              ),
+                              decoration: AppDecoration.fillOnError.copyWith(
+                                borderRadius:
+                                    BorderRadiusStyle.customBorderBL10,
+                              ),
+                              child: CustomImageView(
+                                imagePath: ImageConstant.imgFrame5140267,
+                                height: 12.v,
+                                width: 37.h,
+                              ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
-                  CustomImageView(
-                    imagePath: ImageConstant.imgImage50,
-                    height: 350.v,
-                    width: 378.h,
-                    margin: EdgeInsets.only(left: 22.h),
-                  ),
-                  CustomImageView(
-                    imagePath: ImageConstant.imgImage51,
-                    height: 350.v,
-                    width: 378.h,
-                    margin: EdgeInsets.only(left: 22.h),
-                  ),
+                  if (shouldShowExtraWidgets)
+                    CustomImageView(
+                      imagePath: ImageConstant.imgImage50,
+                      height: 350.v,
+                      width: 378.h,
+                      margin: EdgeInsets.only(left: 22.h),
+                    ),
+                  if (shouldShowExtraWidgets)
+                    CustomImageView(
+                      imagePath: ImageConstant.imgImage51,
+                      height: 350.v,
+                      width: 378.h,
+                      margin: EdgeInsets.only(left: 22.h),
+                    ),
                 ],
               ),
             ),

@@ -28,6 +28,8 @@ class SelectAddressScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<bool> selectedItems =
+        ModalRoute.of(context)!.settings.arguments as List<bool>;
     mediaQueryData = MediaQuery.of(context);
     return SafeArea(
         child: Scaffold(
@@ -314,6 +316,6 @@ class SelectAddressScreen extends StatelessWidget {
 
   /// Navigates to the homePageScreen when the action is triggered.
   onTapImage(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.homePageScreen);
+    Navigator.pop(context);
   }
 }

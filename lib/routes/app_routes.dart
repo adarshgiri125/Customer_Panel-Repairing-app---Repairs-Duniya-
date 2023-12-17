@@ -1,3 +1,4 @@
+import 'package:customer_app/presentation/repair_service/service_repair_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:customer_app/presentation/select_address_screen/select_address_screen.dart';
 import 'package:customer_app/presentation/home_page_screen/home_page_screen.dart';
@@ -14,10 +15,15 @@ class AppRoutes {
 
   static const String otpOneScreen = '/otp_one_screen';
 
+  static const String serviceScreen = '/service_repair_screen';
+
+  
+
 
   static Map<String, WidgetBuilder> routes = {
     selectAddressScreen: (context) => SelectAddressScreen(),
     homePageScreen: (context) => HomePageScreen(),
     logInTwoScreen: (context) =>LogInOneScreen(),
+    
   };
 }
