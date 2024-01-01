@@ -18,6 +18,7 @@ class CustomOutlinedButton extends BaseButton {
     double? width,
     EdgeInsets? margin,
     required String text,
+    this.textStyle,
   }) : super(
           text: text,
           onPressed: onPressed,
@@ -38,6 +39,8 @@ class CustomOutlinedButton extends BaseButton {
 
   final Widget? label;
 
+  final TextStyle? textStyle;
+
   @override
   Widget build(BuildContext context) {
     return alignment != null
@@ -53,21 +56,31 @@ class CustomOutlinedButton extends BaseButton {
         width: this.width ?? double.maxFinite,
         margin: margin,
         decoration: decoration,
-        child: OutlinedButton(
-          style: buttonStyle,
-          onPressed: isDisabled ?? false ? null : onPressed ?? () {},
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              leftIcon ?? const SizedBox.shrink(),
-              Text(
-                text,
-                style: buttonTextStyle ??
-                    CustomTextStyles.titleSmallOpenSansOnError,
-              ),
-              rightIcon ?? const SizedBox.shrink(),
-            ],
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: OutlinedButton(
+            style: buttonStyle?.merge(
+              OutlinedButton.styleFrom(
+                  // Add any other style properties as needed
+                  ),
+            ),
+            onPressed: isDisabled ?? false ? null : onPressed ?? () {},
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                leftIcon ?? const SizedBox.shrink(),
+                Text(
+                  text,
+                  style:
+                      (textStyle ?? CustomTextStyles.titleSmallOpenSansOnError)
+                          .copyWith(
+                    color: textStyle?.color ?? Colors.blue, // Set text color
+                  ),
+                ),
+                rightIcon ?? const SizedBox.shrink(),
+              ],
+            ),
           ),
         ),
       );

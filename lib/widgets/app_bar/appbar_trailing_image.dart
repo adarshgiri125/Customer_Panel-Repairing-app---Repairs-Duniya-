@@ -1,4 +1,5 @@
 import 'package:customer_app/core/app_export.dart';
+import 'package:customer_app/presentation/user%20profile/profile.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -22,7 +23,10 @@ class AppbarTrailingImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        onTap!.call();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Profile()),
+        );
       },
       child: Padding(
         padding: margin ?? EdgeInsets.zero,

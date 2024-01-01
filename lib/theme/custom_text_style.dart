@@ -12,11 +12,28 @@ class CustomTextStyles {
       );
   static get bodyLargeBluegray700 => theme.textTheme.bodyLarge!.copyWith(
         color: appTheme.blueGray700,
-      );    
+      );
+  static get titleLargeGray700 => theme.textTheme.titleLarge!.copyWith(
+        color: appTheme.gray700,
+        fontWeight: FontWeight.w400,
+      );
   static get titleSmallPrimary => theme.textTheme.titleSmall!.copyWith(
         color: theme.colorScheme.primary.withOpacity(1),
         fontWeight: FontWeight.w600,
-      );    
+      );
+  static get bodyLargeOpenSansGray700 =>
+      theme.textTheme.bodyLarge!.openSans.copyWith(
+        color: appTheme.gray700,
+      );
+  static get titleMediumBlack900 => theme.textTheme.titleMedium!.copyWith(
+        color: appTheme.black900,
+        fontWeight: FontWeight.w600,
+      );
+
+  static get bodyMediumOnSecondaryContainer =>
+      theme.textTheme.bodyMedium!.copyWith(
+        color: theme.colorScheme.onSecondaryContainer,
+      );
   static get bodyLargeGray700 => theme.textTheme.bodyLarge!.copyWith(
         color: appTheme.gray700,
       );

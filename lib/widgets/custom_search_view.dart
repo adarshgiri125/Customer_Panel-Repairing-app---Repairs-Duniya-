@@ -23,50 +23,33 @@ class CustomSearchView extends StatelessWidget {
     this.fillColor,
     this.filled = true,
     this.validator,
+    this.onSubmitted,
     this.onChanged,
   }) : super(
           key: key,
         );
 
   final Alignment? alignment;
-
   final double? width;
-
   final TextEditingController? controller;
-
   final FocusNode? focusNode;
-
   final bool? autofocus;
-
-  final TextStyle? textStyle;
-
-  final TextInputType? textInputType;
-
-  final int? maxLines;
-
-  final String? hintText;
-
-  final TextStyle? hintStyle;
-
-  final Widget? prefix;
-
-  final BoxConstraints? prefixConstraints;
-
-  final Widget? suffix;
-
-  final BoxConstraints? suffixConstraints;
-
-  final EdgeInsets? contentPadding;
-
-  final InputBorder? borderDecoration;
-
-  final Color? fillColor;
-
-  final bool? filled;
-
-  final FormFieldValidator<String>? validator;
-
   final Function(String)? onChanged;
+  final TextStyle? textStyle;
+  final TextInputType? textInputType;
+  final int? maxLines;
+  final String? hintText;
+  final TextStyle? hintStyle;
+  final Widget? prefix;
+  final BoxConstraints? prefixConstraints;
+  final Widget? suffix;
+  final BoxConstraints? suffixConstraints;
+  final EdgeInsets? contentPadding;
+  final InputBorder? borderDecoration;
+  final Color? fillColor;
+  final bool? filled;
+  final FormFieldValidator<String>? validator;
+  final void Function(String)? onSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -90,10 +73,12 @@ class CustomSearchView extends StatelessWidget {
           decoration: decoration,
           validator: validator,
           onChanged: (String value) {
-            onChanged!.call(value);
+            onChanged?.call(value);
           },
+          onFieldSubmitted: onSubmitted,
         ),
       );
+
   InputDecoration get decoration => InputDecoration(
         hintText: hintText ?? "",
         hintStyle: hintStyle ?? CustomTextStyles.bodyLargeGray700,

@@ -1,16 +1,18 @@
-import 'package:customer_app/core/app_export.dart';
+import 'package:customer_app/core/utils/image_constant.dart';
+import 'package:customer_app/theme/app_decoration.dart';
+import 'package:customer_app/widgets/custom_image_view.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class Viewhierarchy1ItemWidget extends StatefulWidget {
-  const Viewhierarchy1ItemWidget({Key? key}) : super(key: key);
+class ViewhierarchyItemWidget extends StatefulWidget {
+  const ViewhierarchyItemWidget({Key? key}) : super(key: key);
 
   @override
-  _Viewhierarchy1ItemWidgetState createState() =>
-      _Viewhierarchy1ItemWidgetState();
+  _ViewhierarchyItemWidgetState createState() =>
+      _ViewhierarchyItemWidgetState();
 }
 
-class _Viewhierarchy1ItemWidgetState extends State<Viewhierarchy1ItemWidget> {
+class _ViewhierarchyItemWidgetState extends State<ViewhierarchyItemWidget> {
   PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0; // Set the initial page to 0
 
@@ -26,8 +28,8 @@ class _Viewhierarchy1ItemWidgetState extends State<Viewhierarchy1ItemWidget> {
           borderRadius: BorderRadiusStyle.roundedBorder7,
         ),
         child: Container(
-          height: 159.v,
-          width: 378.h,
+          height: 159,
+          width: 378,
           decoration:
               AppDecoration.gradientOnPrimaryContainerToOnError.copyWith(
             borderRadius: BorderRadiusStyle.roundedBorder7,
@@ -45,23 +47,23 @@ class _Viewhierarchy1ItemWidgetState extends State<Viewhierarchy1ItemWidget> {
                 children: [
                   CustomImageView(
                     imagePath: ImageConstant.imgImage40,
-                    height: 159.v,
-                    width: 378.h,
+                    height: 159,
+                    width: 378,
                   ),
                   CustomImageView(
                     imagePath: ImageConstant.imgImage38,
-                    height: 159.v,
-                    width: 378.h,
+                    height: 159,
+                    width: 378,
                   ),
                   CustomImageView(
                     imagePath: ImageConstant.imgImage39,
-                    height: 159.v,
-                    width: 378.h,
+                    height: 159,
+                    width: 378,
                   ),
                 ],
               ),
               Positioned(
-                bottom: 10.v,
+                bottom: 10,
                 left: 0,
                 right: 0,
                 child: Center(
@@ -70,7 +72,7 @@ class _Viewhierarchy1ItemWidgetState extends State<Viewhierarchy1ItemWidget> {
                     count: 3, // Adjust the count based on the number of images
                     effect: ScrollingDotsEffect(
                       activeDotColor: Color.fromARGB(18, 3, 3, 255),
-                      dotHeight: 12.v,
+                      dotHeight: 12,
                     ),
                   ),
                 ),

@@ -94,6 +94,13 @@ class AppDecoration {
           width: 1.h,
         ),
       );
+      static BoxDecoration get outlineBlueGrayE => BoxDecoration(
+        color: theme.colorScheme.onErrorContainer,
+        border: Border.all(
+          color: appTheme.blueGray10001,
+          width: 1.h,
+        ),
+      );
   static BoxDecoration get outlinePrimary => BoxDecoration(
         color: theme.colorScheme.onError,
         boxShadow: [
@@ -104,6 +111,22 @@ class AppDecoration {
             offset: Offset(
               0,
               4,
+            ),
+          ),
+        ],
+      );
+
+       // Outline decorations
+  static BoxDecoration get outlineAmber => BoxDecoration(
+        color: theme.colorScheme.onErrorContainer,
+        boxShadow: [
+          BoxShadow(
+            color: appTheme.amber300.withOpacity(0.1),
+            spreadRadius: 2.h,
+            blurRadius: 2.h,
+            offset: Offset(
+              0,
+              0,
             ),
           ),
         ],
@@ -132,6 +155,9 @@ class BorderRadiusStyle {
   static BorderRadius get customBorderBL20 => BorderRadius.vertical(
         bottom: Radius.circular(20.h),
       );
+    static BorderRadius get roundedBorder20 => BorderRadius.circular(
+    20.h,
+  );
 
   // Rounded borders
   static BorderRadius get roundedBorder10 => BorderRadius.circular(

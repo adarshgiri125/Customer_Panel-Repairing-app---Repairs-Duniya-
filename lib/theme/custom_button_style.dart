@@ -4,6 +4,29 @@ import 'package:flutter/material.dart';
 
 /// A class that offers pre-defined button styles for customizing button appearance.
 class CustomButtonStyles {
+
+  static BoxDecoration get gradientBlackToPrimaryDecoration => BoxDecoration(
+        borderRadius: BorderRadius.circular(16.h),
+        boxShadow: [
+          BoxShadow(
+            color: appTheme.black900.withOpacity(0.1),
+            spreadRadius: 2.h,
+            blurRadius: 2.h,
+            offset: Offset(
+              0,
+              4,
+            ),
+          ),
+        ],
+        gradient: LinearGradient(
+          begin: Alignment(0.5, 0),
+          end: Alignment(0.5, 1),
+          colors: [
+            appTheme.black900,
+            theme.colorScheme.primary,
+          ],
+        ),
+      );
   // Gradient button style
   static BoxDecoration get gradientPrimaryToOnErrorContainerDecoration =>
       BoxDecoration(

@@ -16,6 +16,7 @@ class CustomCheckboxButton extends StatelessWidget {
     this.textStyle,
     this.textAlignment,
     this.isExpandedText = false,
+    this.height,
   }) : super(key: key);
 
   final BoxDecoration? decoration;
@@ -30,6 +31,7 @@ class CustomCheckboxButton extends StatelessWidget {
   final TextStyle? textStyle;
   final TextAlign? textAlignment;
   final bool isExpandedText;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -85,9 +87,14 @@ class CustomCheckboxButton extends StatelessWidget {
     return Text(
       text ?? "",
       textAlign: textAlignment ?? TextAlign.center,
-      style: textStyle?.copyWith(color: Colors.black) ??
+      style: textStyle?.copyWith(
+            color: Colors.black,
+            fontSize: 20.0, // Set the desired font size for the text
+          ) ??
           TextStyle(
-              color: Colors.black, fontSize: 16.0), // Adjust styling as needed
+            color: Colors.black,
+            fontSize: 20.0, // Adjust font size as needed
+          ),
     );
   }
 
@@ -101,19 +108,18 @@ class CustomCheckboxButton extends StatelessWidget {
 
   Widget checkboxWidget() {
     return SizedBox(
-      height: iconSize ?? 21,
-      width: iconSize ?? 21,
-      child: Checkbox(
-        visualDensity: VisualDensity(
-          vertical: -4,
-          horizontal: -4,
+      height: 50.0, // Set the desired height for the checkbox container
+      width: 50.0, // Set the desired width for the checkbox container
+      child: Transform.scale(
+        scale: 1.5, // Adjust the scale factor to make the checkbox larger
+        child: Checkbox(
+          value: value ?? false,
+          checkColor: Colors.white,
+          fillColor: MaterialStateProperty.resolveWith((states) => getColor()),
+          onChanged: (value) {
+            onChange(value!);
+          },
         ),
-        value: value ?? false,
-        checkColor: Colors.white,
-        fillColor: MaterialStateProperty.resolveWith((states) => getColor()),
-        onChanged: (value) {
-          onChange(value!);
-        },
       ),
     );
   }

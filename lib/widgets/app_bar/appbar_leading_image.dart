@@ -22,7 +22,7 @@ class AppbarLeadingImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        onTap!.call();
+        Navigator.pop(context);
       },
       child: Padding(
         padding: margin ?? EdgeInsets.zero,

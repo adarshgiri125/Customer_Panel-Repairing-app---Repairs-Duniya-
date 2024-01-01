@@ -1,320 +1,429 @@
+import 'dart:async';
+import 'package:customer_app/app%20state/app_state.dart';
 import 'package:customer_app/core/app_export.dart';
+import 'package:customer_app/presentation/booking_confirmation_screen/booking_confirmation_screen.dart';
 import 'package:customer_app/widgets/app_bar/appbar_leading_image.dart';
 import 'package:customer_app/widgets/app_bar/appbar_title.dart';
 import 'package:customer_app/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:customer_app/widgets/app_bar/custom_app_bar.dart';
+import 'package:customer_app/widgets/custom_checkbox_button.dart';
 import 'package:customer_app/widgets/custom_elevated_button.dart';
-import 'package:customer_app/widgets/custom_floating_text_field.dart';
 import 'package:customer_app/widgets/custom_outlined_button.dart';
-import 'package:customer_app/widgets/custom_text_form_field.dart';
+import 'package:customer_app/widgets/custom_search_view.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
-// ignore_for_file: must_be_immutable
-class SelectAddressScreen extends StatelessWidget {
+class SelectAddressScreen extends StatefulWidget {
   SelectAddressScreen({Key? key}) : super(key: key);
 
-  TextEditingController enterHouseFlatNumberController =
-      TextEditingController();
+  @override
+  _SelectAddressScreenState createState() => _SelectAddressScreenState();
+}
 
-  TextEditingController enterStreetController = TextEditingController();
-
+class _SelectAddressScreenState extends State<SelectAddressScreen> {
   TextEditingController floatingTextFieldController = TextEditingController();
-
-  TextEditingController inputField3Controller = TextEditingController();
-
-  TextEditingController inputField4Controller = TextEditingController();
+  String address = "";
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  Completer<GoogleMapController> _mapController =
+      Completer<GoogleMapController>();
+
+  DateTime? selectedDate;
+  LatLng _initialCameraPosition =
+      AppState.currentLocation ?? LatLng(12.9716, 77.5946);
+
+  bool isChecked = false;
 
   @override
   Widget build(BuildContext context) {
-    final List<bool> selectedItems =
-        ModalRoute.of(context)!.settings.arguments as List<bool>;
-    mediaQueryData = MediaQuery.of(context);
     return SafeArea(
-        child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: _buildAppBar(context),
-            body: Form(
-                key: _formKey,
-                child: SizedBox(
-                    width: double.maxFinite,
-                    child: Column(children: [
-                      _buildFrame(context),
-                      SizedBox(height: 14.v),
-                      _buildInputField1(context),
-                      SizedBox(height: 8.v),
-                      _buildInputField2(context),
-                      SizedBox(height: 16.v),
-                      _buildFrame2(context),
-                      SizedBox(height: 23.v),
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                              padding: EdgeInsets.only(left: 22.h),
-                              child: Row(children: [
-                                Container(
-                                    height: 32.adaptSize,
-                                    width: 32.adaptSize,
-                                    decoration: BoxDecoration(
-                                        color: theme.colorScheme.onError,
-                                        borderRadius:
-                                            BorderRadius.circular(10.h),
-                                        border: Border.all(
-                                            color: appTheme.gray900,
-                                            width: 1.h))),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 11.h, top: 6.v, bottom: 3.v),
-                                    child: Text("Urgent Booking",
-                                        style:
-                                            CustomTextStyles.bodyLargeGray700))
-                              ]))),
-                      SizedBox(height: 9.v),
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                              padding: EdgeInsets.only(left: 22.h),
-                              child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 14.v, bottom: 15.v),
-                                        child: Text("Choose Date:",
-                                            style: CustomTextStyles
-                                                .bodyLargeGray700)),
-                                    _buildButton1(context)
-                                  ]))),
-                      SizedBox(height: 20.v),
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                              padding: EdgeInsets.only(left: 24.h),
-                              child: Text("Choose Preferred time slot:",
-                                  style: CustomTextStyles.bodyLargeGray700))),
-                      SizedBox(height: 15.v),
-                      _buildFrame3(context),
-                      SizedBox(height: 5.v),
-                      _buildFrame4(context),
-                      SizedBox(height: 5.v)
-                    ]))),
-            bottomNavigationBar: _buildButton2(context)));
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: _buildAppBar(context),
+        body: Form(
+          key: _formKey,
+          child: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              children: [
+                _buildFrame(context),
+                SizedBox(height: 23.v),
+                Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 7.0),
+                    ),
+                    CustomCheckboxButton(
+                      value: isChecked,
+                      onChange: (newValue) {
+                        setState(() {
+                          isChecked = newValue;
+                        });
+                      },
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 0.0),
+                      child: Text(
+                        "Urgent Booking",
+                        style: CustomTextStyles.bodyLargeGray700.copyWith(
+                          fontSize: 18.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 9.v),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 22.h),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 14.v, bottom: 15.v),
+                          child: Text(
+                            "Choose Date:",
+                            style: CustomTextStyles.bodyLargeGray700,
+                          ),
+                        ),
+                        _buildButton1(context),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.v),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 24.h),
+                    child: Text(
+                      "Choose Preferred time slot:",
+                      style: CustomTextStyles.bodyLargeGray700,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 15.v),
+                _buildFrame3(context),
+                SizedBox(height: 5.v),
+                _buildFrame4(context),
+                SizedBox(height: 5.v),
+              ],
+            ),
+          ),
+        ),
+        bottomNavigationBar: _buildButton2(context),
+      ),
+    );
   }
 
-  /// Section Widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
-        leadingWidth: 68.h,
-        leading: AppbarLeadingImage(
-            imagePath: ImageConstant.imgFrame5140245,
-            margin: EdgeInsets.only(left: 26.h, bottom: 6.v),
-            onTap: () {
-              onTapImage(context);
-            }),
-        title: AppbarTitle(
-            text: "Select Address", margin: EdgeInsets.only(left: 7.h)),
-        actions: [
-          AppbarTrailingImage(
-              imagePath: ImageConstant.imgGroup,
-              margin: EdgeInsets.only(left: 37.h, right: 37.h, bottom: 18.v))
-        ],
-        styleType: Style.bgGradientnameamber300nameerrorContainer);
+      leadingWidth: 68.h,
+      leading: AppbarLeadingImage(
+        imagePath: ImageConstant.imgFrame5140245,
+        margin: EdgeInsets.only(left: 26.h, bottom: 6.v),
+        onTap: () {
+          onTapImage(context);
+        },
+      ),
+      title: AppbarTitle(
+        text: "Select Address",
+        margin: EdgeInsets.only(left: 7.h),
+      ),
+      actions: [
+        AppbarTrailingImage(
+          imagePath: ImageConstant.imgGroup,
+          margin: EdgeInsets.only(left: 37.h, right: 37.h, bottom: 18.v),
+        )
+      ],
+      styleType: Style.bgGradientnameamber300nameerrorContainer,
+    );
   }
 
-  /// Section Widget
   Widget _buildUseMyCurrentLocation(BuildContext context) {
     return CustomOutlinedButton(
-        text: "Use my current location",
-        leftIcon: Container(
-            margin: EdgeInsets.only(right: 8.h),
-            child: CustomImageView(
-                imagePath: ImageConstant.imgVector,
-                height: 22.v,
-                width: 20.h)));
+      text: "Use my current location",
+      leftIcon: Container(
+        margin: EdgeInsets.only(right: 8.h),
+        child: CustomImageView(
+          imagePath: ImageConstant.imgVector,
+          height: 22.v,
+          width: 20.h,
+        ),
+      ),
+      textStyle: TextStyle(
+        color: Colors.black,
+      ),
+      onPressed: () async {
+        final GoogleMapController controller = await _mapController.future;
+        controller.animateCamera(CameraUpdate.newLatLng(
+          AppState.currentLocation ?? LatLng(0.0, 0.0),
+        ));
+      },
+    );
   }
 
-  /// Section Widget
   Widget _buildFrame(BuildContext context) {
-    return SizedBox(
-        height: 201.v,
-        width: double.maxFinite,
-        child: Stack(alignment: Alignment.bottomCenter, children: [
-          CustomImageView(
-              imagePath: ImageConstant.imgScreenshot116,
-              height: 201.v,
-              width: 430.h,
-              alignment: Alignment.center),
-          Align(
+    return Padding(
+      padding: EdgeInsets.only(top: 8.0),
+      child: Column(
+        children: [
+          CustomSearchView(
+            controller: floatingTextFieldController,
+            hintText: "Search other Location",
+            onChanged: (value) {
+              // Update the text of the controller
+              floatingTextFieldController.text = value;
+            },
+            onSubmitted: (value) {
+              _updateMapWithSearch(value);
+            },
+            autofocus: false,
+          ),
+          SizedBox(
+            height: 400.v,
+            width: double.maxFinite,
+            child: Stack(
               alignment: Alignment.bottomCenter,
-              child: Padding(
-                  padding:
-                      EdgeInsets.only(left: 76.h, right: 76.h, bottom: 9.v),
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    CustomImageView(
-                        imagePath: ImageConstant.imgVector,
-                        height: 31.v,
-                        width: 28.h,
-                        alignment: Alignment.centerRight,
-                        margin: EdgeInsets.only(right: 43.h)),
-                    SizedBox(height: 78.v),
-                    _buildUseMyCurrentLocation(context)
-                  ])))
-        ]));
+              children: [
+                GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: CameraPosition(
+                    target: _initialCameraPosition,
+                    zoom: 16.0,
+                  ),
+                  onMapCreated: (GoogleMapController controller) {
+                    _mapController.complete(controller);
+                    _updateCameraPosition(controller);
+                  },
+                  markers: _createMarkers(),
+                  onCameraMove: (CameraPosition position) {},
+                  onCameraIdle: () async {
+                    final GoogleMapController controller =
+                        await _mapController.future;
+                    _updateCameraPosition(controller);
+                  },
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding:
+                        EdgeInsets.only(left: 76.h, right: 76.h, bottom: 9.v),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildUseMyCurrentLocation(context),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  /// Section Widget
-  Widget _buildEnterHouseFlatNumber(BuildContext context) {
-    return CustomTextFormField(
-        controller: enterHouseFlatNumberController,
-        hintText: "Enter your house/flat number",
-        textInputType: TextInputType.number);
+  void _updateCameraPosition(GoogleMapController controller) async {
+    LatLngBounds visibleRegion = await controller.getVisibleRegion();
+    LatLng center = LatLng(
+      (visibleRegion.southwest.latitude + visibleRegion.northeast.latitude) / 2,
+      (visibleRegion.southwest.longitude + visibleRegion.northeast.longitude) /
+          2,
+    );
+
+    setState(() {
+      _initialCameraPosition = center;
+    });
+    await _updateMarkerPosition(center);
   }
 
-  /// Section Widget
-  Widget _buildInputField1(BuildContext context) {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.h),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text("House/Flat Number",
-              style: CustomTextStyles.bodyMediumGray700_1),
-          SizedBox(height: 10.v),
-          _buildEnterHouseFlatNumber(context)
-        ]));
+  Future<void> _updateMapWithSearch(String searchInput) async {
+    if (searchInput.isNotEmpty) {
+      try {
+        List<Location> locations = await locationFromAddress(searchInput);
+
+        if (locations.isNotEmpty) {
+          Location location = locations[0];
+          final GoogleMapController controller = await _mapController.future;
+          double zoomLevel = 18.0;
+
+          controller.animateCamera(CameraUpdate.newLatLngZoom(
+            LatLng(location.latitude!, location.longitude!),
+            zoomLevel,
+          ));
+        } else {
+          print("No locations found for the entered address");
+        }
+      } catch (e) {
+        print("Error during geocoding: $e");
+      }
+    } else {
+      print("Search input is empty");
+    }
   }
 
-  /// Section Widget
-  Widget _buildEnterStreet(BuildContext context) {
-    return CustomTextFormField(
-        controller: enterStreetController, hintText: "Enter your street ");
+  void _performSearch() {
+    String searchInput = floatingTextFieldController.text;
+    if (searchInput.isNotEmpty) {
+      _updateMapWithSearch(searchInput);
+    }
   }
 
-  /// Section Widget
-  Widget _buildInputField2(BuildContext context) {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.h),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text("Sector/Street", style: CustomTextStyles.bodyMediumGray700_1),
-          SizedBox(height: 10.v),
-          _buildEnterStreet(context)
-        ]));
+  Set<Marker> _createMarkers() {
+    return <Marker>{
+      Marker(
+        markerId: MarkerId("currentLocation"),
+        position: _initialCameraPosition,
+        draggable: true,
+        onDragEnd: (LatLng newPosition) {
+          _updateMarkerPosition(newPosition);
+        },
+      ),
+    };
   }
 
-  /// Section Widget
-  Widget _buildFloatingTextField(BuildContext context) {
-    return CustomFloatingTextField(
-        width: 121.h,
-        controller: floatingTextFieldController,
-        labelText: "City",
-        labelStyle: theme.textTheme.bodyLarge!,
-        hintText: "City");
+  Future<void> _updateMarkerPosition(LatLng newPosition) async {
+    setState(() {
+      _initialCameraPosition = newPosition;
+    });
+
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      newPosition.latitude,
+      newPosition.longitude,
+    );
+
+    Placemark place = placemarks.isNotEmpty ? placemarks[0] : Placemark();
+
+    address =
+        "${place.street}, ${place.locality}, ${place.postalCode}, ${place.country}";
+
+    if (address != null) {
+      floatingTextFieldController.text = address;
+    }
+
+    AppState.userLocation = newPosition;
+    AppState.address = address;
   }
 
-  /// Section Widget
-  Widget _buildInputField3(BuildContext context) {
-    return CustomTextFormField(
-        width: 121.h, controller: inputField3Controller, hintText: "e.g Goa");
-  }
-
-  /// Section Widget
-  Widget _buildInputField4(BuildContext context) {
-    return CustomTextFormField(
-        width: 121.h,
-        controller: inputField4Controller,
-        hintText: "Enter Pin",
-        textInputAction: TextInputAction.done);
-  }
-
-  /// Section Widget
-  Widget _buildFrame2(BuildContext context) {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 21.h),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          _buildFloatingTextField(context),
-          Padding(
-              padding: EdgeInsets.only(left: 12.h),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("State", style: CustomTextStyles.bodyMediumGray700),
-                    SizedBox(height: 1.v),
-                    _buildInputField3(context)
-                  ])),
-          Padding(
-              padding: EdgeInsets.only(left: 12.h),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Pincode", style: CustomTextStyles.bodyMediumGray700),
-                    SizedBox(height: 1.v),
-                    _buildInputField4(context)
-                  ]))
-        ]));
-  }
-
-  /// Section Widget
   Widget _buildButton1(BuildContext context) {
     return CustomOutlinedButton(
-        height: 52.v,
-        width: 165.h,
-        text: "DD/MM/YYYY",
-        margin: EdgeInsets.only(left: 21.h),
-        buttonStyle: CustomButtonStyles.outlineBlueGray,
-        buttonTextStyle: theme.textTheme.bodyLarge!);
+      height: 52.v,
+      width: 165.h,
+      text: selectedDate != null
+          ? "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}"
+          : "DD/MM/YYYY",
+      margin: EdgeInsets.only(left: 21.h),
+      buttonStyle: selectedDate != null
+          ? CustomButtonStyles.outlinePrimaryTL5
+          : CustomButtonStyles.outlineBlueGray,
+      buttonTextStyle: TextStyle(
+        fontSize: 16.0,
+        color: selectedDate != null ? Colors.black : Colors.blue,
+      ),
+      onPressed: () {
+        _selectDate(context);
+      },
+    );
   }
 
-  /// Section Widget
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(DateTime.now().year + 5),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        selectedDate = pickedDate;
+      });
+    }
+  }
+
   Widget _buildFrame3(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 23.h),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Container(
-              width: 121.h,
-              padding: EdgeInsets.symmetric(horizontal: 27.h, vertical: 13.v),
-              decoration: AppDecoration.outlineErrorContainer
-                  .copyWith(borderRadius: BorderRadiusStyle.roundedBorder10),
-              child: Text("Morning",
-                  style: CustomTextStyles.bodyLargeErrorContainer)),
-          Container(
-              width: 121.h,
-              margin: EdgeInsets.only(left: 10.h),
-              padding: EdgeInsets.symmetric(horizontal: 22.h, vertical: 14.v),
-              decoration: AppDecoration.outlineErrorContainer
-                  .copyWith(borderRadius: BorderRadiusStyle.roundedBorder10),
-              child: Text("Afternoon",
-                  style: CustomTextStyles.bodyLargeErrorContainer)),
-          Container(
-              width: 121.h,
-              margin: EdgeInsets.only(left: 10.h),
-              padding: EdgeInsets.symmetric(horizontal: 30.h, vertical: 13.v),
-              decoration: AppDecoration.outlineErrorContainer
-                  .copyWith(borderRadius: BorderRadiusStyle.roundedBorder10),
-              child: Text("Evening",
-                  style: CustomTextStyles.bodyLargeErrorContainer))
-        ]));
+      padding: EdgeInsets.symmetric(horizontal: 23.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildTimeOption("Morning", 0, context),
+          _buildTimeOption("Afternoon", 1, context),
+          _buildTimeOption("Evening", 2, context),
+        ],
+      ),
+    );
   }
 
-  /// Section Widget
+  int selectedTimeIndex = -1;
+  Widget _buildTimeOption(String time, int index, BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedTimeIndex = index;
+          print("Selected time: $time");
+        });
+      },
+      child: Container(
+        width: 110.h,
+        margin: EdgeInsets.only(left: 10.h),
+        padding: EdgeInsets.symmetric(vertical: 19.v),
+        decoration: BoxDecoration(
+          color: selectedTimeIndex == index ? Colors.black : Colors.transparent,
+          borderRadius: BorderRadiusStyle.roundedBorder10,
+          border: Border.all(
+            color: selectedTimeIndex == index ? Colors.black : Colors.blue,
+            width: 2.h,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            time,
+            style: TextStyle(
+              fontSize: 14.0,
+              color: selectedTimeIndex == index ? Colors.white : Colors.blue,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildFrame4(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 43.h),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      padding: EdgeInsets.symmetric(horizontal: 43.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
           Text("8:00 am - 12:00 pm", style: theme.textTheme.bodySmall),
           Spacer(flex: 50),
           Text("12:00 pm - 5:00 pm", style: theme.textTheme.bodySmall),
           Spacer(flex: 49),
-          Text("5:00 pm - 8:00 pm", style: theme.textTheme.bodySmall)
-        ]));
+          Text("5:00 pm - 8:00 pm", style: theme.textTheme.bodySmall),
+        ],
+      ),
+    );
   }
 
-  /// Section Widget
   Widget _buildButton2(BuildContext context) {
     return CustomElevatedButton(
-        text: "Confirm Booking",
-        margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 34.v));
+      text: "Confirm Booking",
+      margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 34.v),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => BookingConfirmationScreen()),
+        );
+      },
+    );
   }
 
-  /// Navigates to the homePageScreen when the action is triggered.
   onTapImage(BuildContext context) {
     Navigator.pop(context);
   }

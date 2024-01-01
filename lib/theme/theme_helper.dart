@@ -209,6 +209,8 @@ class PrimaryColors {
 
   // Grayc
   Color get gray9000c => Color(0X0C101828);
+  // black
+  Color get black900 => Color(0XFF000000);
 
   // Orange
   Color get orangeA100 => Color(0XFFFFD493);

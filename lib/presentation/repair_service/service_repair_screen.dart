@@ -1,4 +1,5 @@
 import 'package:customer_app/core/app_export.dart';
+import 'package:customer_app/presentation/item_list/list.dart';
 import 'package:customer_app/presentation/repair_service/widgets/list_item_widget.dart';
 import 'package:customer_app/presentation/repair_service/widgets/viewhierarchy1_item_widget.dart';
 import 'package:customer_app/widgets/app_bar/appbar_leading_image.dart';
@@ -21,6 +22,7 @@ class AcServiceRepairScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Current itemName: $itemName');
     mediaQueryData = MediaQuery.of(context);
     return SafeArea(
       child: Scaffold(
@@ -35,14 +37,18 @@ class AcServiceRepairScreen extends StatelessWidget {
                       EdgeInsets.only(left: 20.h, right: 24.h, bottom: 5.v),
                   child: Column(
                     children: [
-                      CustomImageView(
-                        imagePath: ImageConstant.imgImage38126x382,
-                        height: 126.v,
-                        width: 382.h,
+                      Container(
+                        // Adjust constraints as needed
+                        height: 200.v,
+                        width: double.infinity,
+                        child: CustomImageView(
+                          imagePath: imagePath,
+                          fit: BoxFit.contain, // Use BoxFit to fit the image
+                        ),
                       ),
                       SizedBox(height: 3.v),
                       _buildSlider(context),
-                      SizedBox(height: 52.v),
+                      SizedBox(height: 30.v),
                       _buildList(context),
                       SizedBox(height: 20.v),
                     ],
@@ -68,7 +74,7 @@ class AcServiceRepairScreen extends StatelessWidget {
         },
       ),
       title: AppbarTitle(
-        text: "AC Service/Repair",
+        text: itemName,
         margin: EdgeInsets.only(left: 9.h),
       ),
       actions: [
@@ -131,6 +137,25 @@ class AcServiceRepairScreen extends StatelessWidget {
   }
 
   Widget _buildList(BuildContext context) {
+    List<dynamic>? items;
+    if (itemName == 'AC') {
+      items = AC;
+    } else if (itemName == 'Washing Machine') {
+      items = WashingMachine;
+    } else if (itemName == 'Lamp') {
+      items = Lamp;
+    } else if (itemName == 'Fan') {
+      items = Fan;
+    } else if (itemName == 'Freeze') {
+      items = Freeze;
+    } else if (itemName == 'Television') {
+      items = Television;
+    } else if (itemName == 'Oven') {
+      items = Oven;
+    } else if (itemName == 'Microwave') {
+      items = Microwave;
+    }
+
     return Center(
       child: Padding(
         padding: EdgeInsets.only(left: 2.h, top: 17.v, right: 3.h),
@@ -145,9 +170,11 @@ class AcServiceRepairScreen extends StatelessWidget {
             itemCount: 1, // Adjust the itemCount as needed
             itemBuilder: (context, index) {
               return ListItemWidget(
+                items: items ?? [],
                 onSelectionChanged: (selected) {
                   selectedItems = selected;
                 },
+                itemName: itemName,
               );
             },
           ),

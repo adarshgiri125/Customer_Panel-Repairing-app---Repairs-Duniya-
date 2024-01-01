@@ -86,4 +86,7 @@ class ImageConstant {
   static String imgVector = '$imagePath/img_vector.png';
 
   static String imageNotFound = 'assets/images/image_not_found.png';
+  
+  static String imgImage42 = '$imagePath/img_image_42.png';
+  
 }

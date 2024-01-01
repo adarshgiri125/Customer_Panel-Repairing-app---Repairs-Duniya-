@@ -1,5 +1,6 @@
-import 'package:customer_app/core/app_export.dart';
 import 'package:flutter/material.dart';
+import 'package:customer_app/core/app_export.dart';
+import 'package:customer_app/theme/custom_text_style.dart';
 
 class CustomTextFormField extends StatelessWidget {
   CustomTextFormField({
@@ -7,6 +8,7 @@ class CustomTextFormField extends StatelessWidget {
     this.alignment,
     this.width,
     this.controller,
+    required this.onChanged,
     this.focusNode,
     this.autofocus = true,
     this.textStyle,
@@ -25,115 +27,95 @@ class CustomTextFormField extends StatelessWidget {
     this.fillColor,
     this.filled = true,
     this.validator,
-  }) : super(
-          key: key,
-        );
+    required this.readOnly, // Fix: Define the readOnly parameter
+  }) : super(key: key);
 
   final Alignment? alignment;
-
+  final Function(String) onChanged;
   final double? width;
-
   final TextEditingController? controller;
-
   final FocusNode? focusNode;
-
   final bool? autofocus;
-
   final TextStyle? textStyle;
-
   final bool? obscureText;
-
   final TextInputAction? textInputAction;
-
   final TextInputType? textInputType;
-
   final int? maxLines;
-
   final String? hintText;
-
   final TextStyle? hintStyle;
-
   final Widget? prefix;
-
   final BoxConstraints? prefixConstraints;
-
   final Widget? suffix;
-
   final BoxConstraints? suffixConstraints;
-
   final EdgeInsets? contentPadding;
-
   final InputBorder? borderDecoration;
-
   final Color? fillColor;
-
   final bool? filled;
-
   final FormFieldValidator<String>? validator;
+  final bool? readOnly; // Fix: Define the readOnly parameter
 
   @override
   Widget build(BuildContext context) {
     return alignment != null
         ? Align(
-            alignment: alignment ?? Alignment.center,
-            child: textFormFieldWidget,
-          )
+      alignment: alignment ?? Alignment.center,
+      child: textFormFieldWidget,
+    )
         : textFormFieldWidget;
   }
 
   Widget get textFormFieldWidget => SizedBox(
-        width: width ?? double.maxFinite,
-        child: TextFormField(
-          controller: controller,
-          focusNode: focusNode ?? FocusNode(),
-          autofocus: autofocus!,
-          style: textStyle ?? CustomTextStyles.bodyLargeInterBluegray500,
-          obscureText: obscureText!,
-          textInputAction: textInputAction,
-          keyboardType: textInputType,
-          maxLines: maxLines ?? 1,
-          decoration: decoration,
-          validator: validator,
-        ),
-      );
+    width: width ?? double.maxFinite,
+    child: TextFormField(
+      controller: controller,
+      focusNode: focusNode ?? FocusNode(),
+      autofocus: autofocus!,
+      style: textStyle ?? CustomTextStyles.bodyLargeBluegray700,
+      obscureText: obscureText!,
+      textInputAction: textInputAction,
+      keyboardType: textInputType,
+      maxLines: maxLines ?? 1,
+      readOnly: readOnly ?? false,
+      decoration: decoration,
+      onChanged: (value) => onChanged(value),
+      validator: validator,
+    ),
+  );
+
   InputDecoration get decoration => InputDecoration(
-        hintText: hintText ?? "",
-        hintStyle: hintStyle ?? theme.textTheme.bodyLarge,
-        prefixIcon: prefix,
-        prefixIconConstraints: prefixConstraints,
-        suffixIcon: suffix,
-        suffixIconConstraints: suffixConstraints,
-        isDense: true,
-        contentPadding: contentPadding ??
-            EdgeInsets.symmetric(
-              horizontal: 12.h,
-              vertical: 15.v,
-            ),
-        fillColor: fillColor ?? theme.colorScheme.onError,
-        filled: filled,
-        border: borderDecoration ??
-            OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.h),
-              borderSide: BorderSide(
-                color: appTheme.blueGray100,
-                width: 1,
-              ),
-            ),
-        enabledBorder: borderDecoration ??
-            OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.h),
-              borderSide: BorderSide(
-                color: appTheme.blueGray100,
-                width: 1,
-              ),
-            ),
-        focusedBorder: borderDecoration ??
-            OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.h),
-              borderSide: BorderSide(
-                color: theme.colorScheme.secondaryContainer,
-                width: 1,
-              ),
-            ),
-      );
+    hintText: hintText ?? "",
+    hintStyle: hintStyle ?? CustomTextStyles.bodyLargeBluegray700,
+    prefixIcon: prefix,
+    prefixIconConstraints: prefixConstraints,
+    suffixIcon: suffix,
+    suffixIconConstraints: suffixConstraints,
+    isDense: true,
+    contentPadding: contentPadding ?? EdgeInsets.all(12.h),
+    fillColor: fillColor ?? theme.colorScheme.onError,
+    filled: filled,
+    border: borderDecoration ??
+        OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.h),
+          borderSide: BorderSide(
+            color: theme.colorScheme.errorContainer,
+            width: 1,
+          ),
+        ),
+    enabledBorder: borderDecoration ??
+        OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.h),
+          borderSide: BorderSide(
+            color: theme.colorScheme.errorContainer,
+            width: 1,
+          ),
+        ),
+    focusedBorder: borderDecoration ??
+        OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.h),
+          borderSide: BorderSide(
+            color: theme.colorScheme.errorContainer,
+            width: 1,
+          ),
+        ),
+  );
 }

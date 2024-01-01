@@ -1,3 +1,4 @@
+import 'package:customer_app/app%20state/app_state.dart';
 import 'package:customer_app/core/app_export.dart';
 import 'package:customer_app/presentation/otp_one_screen/otp_one_screen.dart';
 import 'package:customer_app/widgets/custom_checkbox_button.dart';
@@ -16,6 +17,8 @@ class LogInOneScreen extends StatefulWidget {
 class _LogInOneScreenState extends State<LogInOneScreen> {
   TextEditingController phoneNumberController = TextEditingController();
   bool rememberForDays = false;
+  String phoneNumber = '';
+  bool flag = false;
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -83,40 +86,35 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
                   ),
                   SizedBox(height: 7.v),
                   CustomTextFormField(
+                    onChanged: (value) {
+                      phoneNumber = value;
+                      setState(() {
+                        if (phoneNumber.length == 10) {
+                          flag = true;
+                        } else {
+                          flag = false;
+                        }
+                      });
+                    },
                     controller: phoneNumberController,
                     hintText: "Enter your phone number",
                     textInputAction: TextInputAction.done,
                     textInputType: TextInputType.phone,
+                    readOnly: false,
                   ),
-                  SizedBox(height: 24.v),
-                  _buildRememberForDays(context),
                   SizedBox(height: 24.v),
                   CustomElevatedButton(
                     text: "Log in",
+                    buttonStyle: flag == true
+                        ? const ButtonStyle(
+                            backgroundColor:
+                                MaterialStatePropertyAll(Colors.black))
+                        : const ButtonStyle(),
                     onPressed: () {
                       _verifyPhoneNumber();
                     },
                   ),
                   SizedBox(height: 33.v),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 1.v),
-                        child: Text(
-                          "Don’t have an account?",
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 4.h),
-                        child: Text(
-                          "Sign up",
-                          style: CustomTextStyles.titleSmallPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
                   SizedBox(height: 5.v),
                 ],
               ),
@@ -158,10 +156,10 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
       print('Invalid phone number. Please enter a 10-digit number.');
 
       ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Invalid phone number'),
-      ),
-    );
+        SnackBar(
+          content: Text('Invalid phone number'),
+        ),
+      );
       return;
     }
 
@@ -176,11 +174,13 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
         print('Verification Failed: ${e.message}');
       },
       codeSent: (String verificationId, int? resendToken) {
+        AppState.userPhoneNumber = phoneNumber;
         // Navigate to OTP screen with verificationId
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => OtpOneScreen(verificationId: verificationId,phoneNumber: phoneNumber),
+            builder: (context) => OtpOneScreen(
+                verificationId: verificationId, phoneNumber: phoneNumber),
           ),
         );
       },

@@ -1,5 +1,14 @@
+import 'package:customer_app/app%20state/app_state.dart';
+import 'package:customer_app/presentation/item_list/list.dart';
+import 'package:customer_app/presentation/home_page_screen/widgets/viewhierarchy_Item_widget.dart';
+import 'package:customer_app/presentation/location/location.dart';
 import 'package:customer_app/presentation/repair_service/service_repair_screen.dart';
-
+import 'package:customer_app/presentation/searchService/DetailsPage.dart';
+import 'package:customer_app/presentation/user%20profile/profile.dart';
+import 'package:customer_app/widgets/app_bar/appbar_menu.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import '../home_page_screen/widgets/homepagestaggered_item_widget.dart';
 import 'package:customer_app/core/app_export.dart';
 import 'package:customer_app/widgets/custom_elevated_button.dart';
@@ -8,11 +17,61 @@ import 'package:customer_app/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-class HomePageScreen extends StatelessWidget {
+class HomePageScreen extends StatefulWidget {
   HomePageScreen({Key? key}) : super(key: key);
 
+  @override
+  _HomePageScreenState createState() => _HomePageScreenState();
+}
+
+class _HomePageScreenState extends State<HomePageScreen> {
   TextEditingController locationController = TextEditingController();
   TextEditingController searchController = TextEditingController();
+  late bool showHalfPage;
+
+  late bool showLocation;
+  late GoogleMapController mapController;
+  LocationService locationService = LocationService();
+  LatLng? currentLocation;
+
+  bool isLocationFetched = false;
+
+  String userInput = "";
+
+  @override
+  void initState() {
+    super.initState();
+    showHalfPage = false;
+    showLocation = false;
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    LocationData? locationData = await locationService.getCurrentLocation();
+    if (locationData != null) {
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          locationData.latitude!,
+          locationData.longitude!,
+        );
+
+        if (placemarks.isNotEmpty) {
+          Placemark placemark = placemarks.first;
+          String address =
+              "${placemark.name}, ${placemark.locality}, ${placemark.administrativeArea}";
+
+          setState(() {
+            AppState.currentLocation =
+                LatLng(locationData.latitude!, locationData.longitude!);
+            // locationController.text = address;
+            isLocationFetched = true;
+          });
+        }
+      } catch (e) {
+        print("Error fetching address: $e");
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +87,11 @@ class HomePageScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                      height: 165.v), // Placeholder for non-scrollable widget
+                    height: 130,
+                  ), // Placeholder for non-scrollable widget
                   Padding(
-                    padding: EdgeInsets.only(left: 24.h),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 24), // Adjusted padding
                     child: RichText(
                       text: TextSpan(
                         children: [
@@ -47,49 +108,52 @@ class HomePageScreen extends StatelessWidget {
                       textAlign: TextAlign.left,
                     ),
                   ),
-                  SizedBox(height: 3.v),
+                  SizedBox(height: 6),
                   _buildHomePageStaggered(context),
-                  SizedBox(height: 1.v),
+                  SizedBox(height: 0),
                   Container(
-                    height: 83.adaptSize,
-                    width: 83.adaptSize,
-                    margin: EdgeInsets.only(left: 24.h),
+                    height: 75,
+                    width: 75,
+                    margin: EdgeInsets.symmetric(
+                        horizontal: 24), // Adjusted padding
                     padding: EdgeInsets.symmetric(
-                      horizontal: 21.h,
-                      vertical: 37.v,
+                      horizontal: 0,
+                      vertical: 0,
                     ),
                     decoration: AppDecoration.outlineBlueGray.copyWith(
                       borderRadius: BorderRadiusStyle.roundedBorder7,
                     ),
                     child: CustomImageView(
                       imagePath: ImageConstant.imgFrame5140235,
-                      height: 6.v,
-                      width: 39.h,
+                      height: 7,
+                      width: 42,
                       alignment: Alignment.center,
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 48.h),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 24), // Adjusted padding
                     child: Text(
                       "More",
                       style: theme.textTheme.bodyMedium,
                     ),
                   ),
-                  SizedBox(height: 28.v),
+                  SizedBox(height: 28),
                   _buildHomePageRow(context),
-                  SizedBox(height: 33.v),
+                  SizedBox(height: 33),
                   Padding(
-                    padding: EdgeInsets.only(left: 24.h),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 24), // Adjusted padding
                     child: Text(
                       "Other Services",
                       style: theme.textTheme.titleLarge,
                     ),
                   ),
-                  SizedBox(height: 11.v),
+                  SizedBox(height: 11),
                   _buildHomePageStack1(context),
-                  SizedBox(height: 79.v),
-                  _buildHomePageColumn(context),
-                  SizedBox(height: 25.v),
+                  SizedBox(height: 79),
+                  ViewhierarchyItemWidget(),
+                  SizedBox(height: 25),
                 ],
               ),
             ),
@@ -114,82 +178,125 @@ class HomePageScreen extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.center,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 24.h),
-              decoration: AppDecoration.gradientAmberToErrorContainer,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 3.h,
-                      right: 13.h,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomImageView(
-                          imagePath: ImageConstant.imgMenu,
-                          height: 21.v,
-                          width: 27.h,
-                          margin: EdgeInsets.only(top: 6.v),
-                        ),
-                        Spacer(
-                          flex: 86,
-                        ),
-                        CustomImageView(
-                          imagePath: ImageConstant.imgGroup,
-                          height: 24.adaptSize,
-                          width: 24.adaptSize,
-                        ),
-                        Spacer(
-                          flex: 13,
-                        ),
-                        CustomImageView(
-                          imagePath: ImageConstant.imgGroup5139931,
-                          height: 25.v,
-                          width: 24.h,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 14.v),
-                  CustomTextFormField(
-                    controller: locationController,
-                    hintText: "Pick Your Location",
-                    hintStyle: CustomTextStyles.bodyMediumGray40002,
-                    prefix: Container(
-                      margin: EdgeInsets.fromLTRB(19.h, 9.v, 8.h, 9.v),
-                      child: CustomImageView(
-                        imagePath: ImageConstant.imgVector,
-                        height: 22.v,
-                        width: 20.h,
+            child: GestureDetector(
+              onTap: () {},
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                decoration: AppDecoration.gradientAmberToErrorContainer,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 3,
+                        right: 13,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              // Handle the tap event for this image
+                              if (showHalfPage) {
+                                _hideHalfPage(context);
+                              } else {
+                                _showHalfPage(context);
+                              }
+                            },
+                            child: CustomImageView(
+                              imagePath: showHalfPage
+                                  ? ImageConstant
+                                      .imgDelete // New image when HalfPage is visible
+                                  : ImageConstant.imgMenu,
+                              height: 21,
+                              width: 27,
+                              margin: EdgeInsets.only(top: 6),
+                            ),
+                          ),
+                          Spacer(
+                            flex: 86,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Profile()),
+                              );
+                            },
+                            child: CustomImageView(
+                              imagePath: ImageConstant.imgGroup,
+                              height: 24,
+                              width: 24,
+                            ),
+                          ),
+                          Spacer(
+                            flex: 13,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              // Handle the tap event for this image
+                            },
+                            child: CustomImageView(
+                              imagePath: ImageConstant.imgGroup5139931,
+                              height: 25,
+                              width: 24,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    prefixConstraints: BoxConstraints(
-                      maxHeight: 40.v,
+                    SizedBox(height: 14),
+                    // CustomTextFormField(
+                    //   controller: locationController,
+                    //   hintText: "Pick Your Location",
+                    //   hintStyle: CustomTextStyles.bodyMediumGray40002,
+                    //   prefix: Container(
+                    //     margin: EdgeInsets.fromLTRB(19, 9, 8, 9),
+                    //     child: CustomImageView(
+                    //       imagePath: ImageConstant.imgVector,
+                    //       height: 22,
+                    //       width: 20,
+                    //     ),
+                    //   ),
+                    //   prefixConstraints: BoxConstraints(
+                    //     maxHeight: 40,
+                    //   ),
+                    //   suffix: Container(
+                    //     margin: EdgeInsets.fromLTRB(30, 6, 12, 6),
+                    //     child: CustomImageView(
+                    //       imagePath: ImageConstant.imgDownChevron,
+                    //       height: 28,
+                    //       width: 24,
+                    //     ),
+                    //   ),
+                    //   suffixConstraints: BoxConstraints(
+                    //     maxHeight: 40,
+                    //   ),
+                    //   contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    //   onChanged: (value) {},
+                    //   readOnly: isLocationFetched,
+                    // ),
+                    SizedBox(height: 8),
+
+                    CustomSearchView(
+                      controller: searchController,
+                      hintText: "Search an appliance or service",
+                      onChanged: (value) {
+                        setState(() {
+                          userInput = value;
+                        });
+                      },
+                      onSubmitted: (value) {
+                        _showDetailsPage(value);
+                      },
+                      autofocus: false,
                     ),
-                    suffix: Container(
-                      margin: EdgeInsets.fromLTRB(30.h, 6.v, 12.h, 6.v),
-                      child: CustomImageView(
-                        imagePath: ImageConstant.imgDownChevron,
-                        height: 28.v,
-                        width: 24.h,
-                      ),
-                    ),
-                    suffixConstraints: BoxConstraints(
-                      maxHeight: 40.v,
-                    ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 10.v),
-                  ),
-                  SizedBox(height: 8.v),
-                  CustomSearchView(
-                    controller: searchController,
-                    hintText: "Search an appliance or service",
-                  ),
-                  SizedBox(height: 12.v),
-                ],
+
+                    SizedBox(height: 12),
+                  ],
+                ),
               ),
             ),
           ),
@@ -201,50 +308,42 @@ class HomePageScreen extends StatelessWidget {
   /// Section Widget
   Widget _buildHomePageStaggered(BuildContext context) {
     // Define a list of items with their respective image paths and names
-    List<Map<String, dynamic>> items = [
-      {"imagePath": ImageConstant.imgImage38, "itemName": "AC"},
-      {"imagePath": ImageConstant.imgImage39, "itemName": "Lamp"},
-      {"imagePath": ImageConstant.imgImage36, "itemName": "Fan"},
-      {"imagePath": ImageConstant.imgImage34, "itemName": "Freeze"},
-      {"imagePath": ImageConstant.imgImage33, "itemName": "Television"},
-      {"imagePath": ImageConstant.imgImage32, "itemName": "Oven"},
-      {"imagePath": ImageConstant.imgImage29, "itemName": "Microwave"},
-      {"imagePath": ImageConstant.imgImage31, "itemName": "Washing Machine"},
-      // Add more items as needed
-    ];
 
-    return StaggeredGridView.countBuilder(
-      shrinkWrap: true,
-      primary: false,
-      crossAxisCount: 8,
-      crossAxisSpacing: 16.h,
-      mainAxisSpacing: 16.h,
-      staggeredTileBuilder: (index) {
-        return StaggeredTile.fit(2);
-      },
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        Map<String, dynamic> currentItem = items[index];
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 24), // Adjusted padding
+      child: StaggeredGridView.countBuilder(
+        shrinkWrap: true,
+        primary: false,
+        crossAxisCount: 8,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        staggeredTileBuilder: (index) {
+          return StaggeredTile.fit(2);
+        },
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          Map<String, dynamic> currentItem = items[index];
 
-        return GestureDetector(
-          onTap: () {
-            // Navigate to the AcServiceRepairScreen and pass the data
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AcServiceRepairScreen(
-                  imagePath: currentItem["imagePath"],
-                  itemName: currentItem["itemName"],
+          return GestureDetector(
+            onTap: () {
+              // Navigate to the AcServiceRepairScreen and pass the data
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AcServiceRepairScreen(
+                    imagePath: currentItem["imagePath"],
+                    itemName: currentItem["itemName"],
+                  ),
                 ),
-              ),
-            );
-          },
-          child: HomepagestaggeredItemWidget(
-            imagePath: currentItem["imagePath"],
-            itemName: currentItem["itemName"],
-          ),
-        );
-      },
+              );
+            },
+            child: HomepagestaggeredItemWidget(
+              imagePath: currentItem["imagePath"],
+              itemName: currentItem["itemName"],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -290,7 +389,7 @@ class HomePageScreen extends StatelessWidget {
                   CustomElevatedButton(
                     height: 44.v,
                     width: 156.h,
-                    text: "Get Started",
+                    text: "Coming soon",
                     buttonStyle: CustomButtonStyles.none,
                     decoration: CustomButtonStyles
                         .gradientPrimaryToOnErrorContainerDecoration,
@@ -448,126 +547,47 @@ class HomePageScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  Widget _buildHomePageColumn(BuildContext context) {
-    bool shouldShowExtraWidgets =
-        true; // Set this condition based on your requirements
+  void _showHalfPage(BuildContext context) {
+  Navigator.of(context).push(PageRouteBuilder(
+    opaque: false,
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0.0, -1.0),
+          end: Offset.zero,
+        ).animate(animation),
+        child: HalfPage(
+          onClose: () {
+            // Callback function to be invoked when the half page is closed
+            _hideHalfPage(context);
+          },
+        ),
+      );
+    },
+  ));
+}
 
-    return Align(
-      alignment: Alignment.center,
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 25.h),
-        height: 130,
-        decoration: AppDecoration.gradientOnPrimaryContainerToOnError.copyWith(
-          borderRadius: BorderRadiusStyle.roundedBorder7,
-        ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: IntrinsicWidth(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadiusStyle.roundedBorder7,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 350.v,
-                    width: 378.h,
-                    child: Stack(
-                      alignment: Alignment.topCenter,
-                      children: [
-                        CustomImageView(
-                          imagePath: ImageConstant.imgImage49,
-                          height: 350.v,
-                          width: 378.h,
-                          alignment: Alignment.center,
-                        ),
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              left: 60.h,
-                              top: 18.v,
-                              right: 60.h,
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: "Rs. 500",
-                                        style: CustomTextStyles
-                                            .bodyMediumOtomanopeeOneOnPrimary,
-                                      ),
-                                      TextSpan(
-                                        text: "  Free Gift Voucher",
-                                        style: CustomTextStyles
-                                            .bodyMediumOtomanopeeOne,
-                                      ),
-                                    ],
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                                CustomImageView(
-                                  imagePath: ImageConstant.imgImage47,
-                                  height: 61.v,
-                                  width: 73.h,
-                                ),
-                                SizedBox(height: 5.v),
-                                Text(
-                                  "Order a Service and stand a chance to win a gift voucher",
-                                  style: CustomTextStyles
-                                      .bodySmallAvenirNextLTProPrimary,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        if (shouldShowExtraWidgets)
-                          Align(
-                            alignment: Alignment.topCenter,
-                            child: Container(
-                              margin: EdgeInsets.only(top: 129.v),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 170.h,
-                                vertical: 9.v,
-                              ),
-                              decoration: AppDecoration.fillOnError.copyWith(
-                                borderRadius:
-                                    BorderRadiusStyle.customBorderBL10,
-                              ),
-                              child: CustomImageView(
-                                imagePath: ImageConstant.imgFrame5140267,
-                                height: 12.v,
-                                width: 37.h,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  if (shouldShowExtraWidgets)
-                    CustomImageView(
-                      imagePath: ImageConstant.imgImage50,
-                      height: 350.v,
-                      width: 378.h,
-                      margin: EdgeInsets.only(left: 22.h),
-                    ),
-                  if (shouldShowExtraWidgets)
-                    CustomImageView(
-                      imagePath: ImageConstant.imgImage51,
-                      height: 350.v,
-                      width: 378.h,
-                      margin: EdgeInsets.only(left: 22.h),
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ),
+  void _hideHalfPage(BuildContext context) {
+    // Use Navigator.pop(context) to remove the topmost route
+    Navigator.pop(context);
+    // Update the state or perform other actions as needed
+    setState(() {
+      showHalfPage = false;
+    });
+  }
+
+  void _showDetailsPage(String itemName) {
+    // Filter the items based on the user input
+    List<Map<String, dynamic>> filteredItems = items
+        .where((item) =>
+            item["itemName"].toLowerCase().contains(userInput.toLowerCase()))
+        .toList();
+
+    // Navigate to a new page and pass the filtered items
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailsPage(filteredItems),
       ),
     );
   }

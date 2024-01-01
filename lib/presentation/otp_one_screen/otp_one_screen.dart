@@ -20,6 +20,10 @@ class OtpOneScreen extends StatefulWidget {
 
 class _OtpOneScreenState extends State<OtpOneScreen> {
   final TextEditingController otpController = TextEditingController();
+  bool flag = false;
+  String otp = '';
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -94,16 +98,33 @@ class _OtpOneScreenState extends State<OtpOneScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 51.h),
                   child: CustomPinCodeTextField(
                     context: context,
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      setState(() {
+                        // Enable the button only when the PIN is 6 digits long
+                        if (value.length == 6) {
+                          flag = true;
+                        } else {
+                          flag = false;
+                        }
+                      });
+                    },
                     controller: otpController,
                   ),
                 ),
                 SizedBox(height: 24.v),
                 CustomElevatedButton(
+                  //  dynamicBackgroundColor: buttonColor,
                   text: "Verify",
-                  onPressed: () {
-                    _verifyOtp(context, otpController.text);
-                  },
+                  buttonStyle: flag == true
+                      ? const ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.black))
+                      : const ButtonStyle(),
+                  onPressed: otpController.text.length == 6
+                      ? () {
+                          _verifyOtp(context, otpController.text);
+                        }
+                      : null,
                 ),
                 SizedBox(height: 33.v),
                 Row(

@@ -77,4 +77,5 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 enum Style {
   bgGradientnameamber300nameerrorContainer,
+  bgGradientnameamber300nameamber600,
 }
