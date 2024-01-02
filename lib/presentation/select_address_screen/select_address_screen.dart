@@ -25,6 +25,7 @@ class SelectAddressScreen extends StatefulWidget {
 class _SelectAddressScreenState extends State<SelectAddressScreen> {
   TextEditingController floatingTextFieldController = TextEditingController();
   String address = "";
+  bool showAdditionalContent = false;
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Completer<GoogleMapController> _mapController =
@@ -35,6 +36,10 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
       AppState.currentLocation ?? LatLng(12.9716, 77.5946);
 
   bool isChecked = false;
+  String? selectedReason;
+  String? userDescription;
+  String? previousDescription;
+  final TextEditingController descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -42,82 +47,230 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: _buildAppBar(context),
-        body: Form(
-          key: _formKey,
-          child: SizedBox(
-            width: double.maxFinite,
-            child: Column(
-              children: [
-                _buildFrame(context),
-                SizedBox(height: 23.v),
-                Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 7.0),
-                    ),
-                    CustomCheckboxButton(
-                      value: isChecked,
-                      onChange: (newValue) {
-                        setState(() {
-                          isChecked = newValue;
-                        });
-                      },
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 0.0),
-                      child: Text(
-                        "Urgent Booking",
-                        style: CustomTextStyles.bodyLargeGray700.copyWith(
-                          fontSize: 18.0,
-                          color: Colors.black,
+        body: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: SizedBox(
+              width: double.maxFinite,
+              child: Column(
+                children: [
+                  _buildFrame(context),
+                  SizedBox(height: 23.v),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 7.0),
+                      ),
+                      CustomCheckboxButton(
+                        value: isChecked,
+                        onChange: (newValue) {
+                          setState(() {
+                            isChecked = newValue;
+                            showAdditionalContent = newValue;
+                          });
+                        },
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 0.0),
+                        child: Text(
+                          "Urgent Booking",
+                          style: CustomTextStyles.bodyLargeGray700.copyWith(
+                            fontSize: 18.0,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 9.v),
+                  if (showAdditionalContent) ...[
+                    // Additional content when checkbox is checked
+                    // You can customize this part based on your requirements
+                    SizedBox(height: 10.v),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 22.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Technician reaches your doorstep within 1 hour from successful booking completion",
+                              style: CustomTextStyles.bodyLargeGray700.copyWith(
+                                fontSize: 14.0,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(height: 5.v),
+                            Text(
+                              "Additional charge of Rs.80/- after service completion",
+                              style: CustomTextStyles.bodyLargeGray700.copyWith(
+                                fontSize: 14.0,
+                                color: Colors.red,
+                              ),
+                            ),
+                            SizedBox(height: 5.v),
+                            // Add DropdownButton or any other input widgets
+                            // for selecting the reason
+                            Center(
+                              child: DropdownButton<String>(
+                                hint: Text(
+                                  selectedReason ??
+                                      "Select Reason for urgent booking",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                items: [
+                                  "Reason 1",
+                                  "Reason 2",
+                                  "Reason is Not listed",
+                                  "Select Reason for urgent booking",
+                                  // Add more options as needed
+                                ].map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Center(
+                                      child: Text(
+                                        value,
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedReason = value;
+                                  });
+                                  // Handle the selected value
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 5.v),
+                            // Add Description with text field
+                            GestureDetector(
+                              onTap: () {
+                                _openDescriptionDialog();
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Add Description",
+                                    style: CustomTextStyles.bodyLargeGray700
+                                        .copyWith(
+                                      fontSize: 14.0,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 5.v),
+                            // Display the user's description
+                            if (userDescription != null &&
+                                userDescription!.isNotEmpty)
+                              Text(
+                                "Your Reason: $userDescription",
+                                style:
+                                    CustomTextStyles.bodyLargeGray700.copyWith(
+                                  fontSize: 14.0,
+                                  color: Colors.black,
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(height: 9.v),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 22.h),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 14.v, bottom: 15.v),
-                          child: Text(
-                            "Choose Date:",
-                            style: CustomTextStyles.bodyLargeGray700,
-                          ),
+                  ] else ...[
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 22.h),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 14.v, bottom: 15.v),
+                              child: Text(
+                                "Choose Date:",
+                                style: CustomTextStyles.bodyLargeGray700,
+                              ),
+                            ),
+                            _buildButton1(context),
+                          ],
                         ),
-                        _buildButton1(context),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                SizedBox(height: 20.v),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 24.h),
-                    child: Text(
-                      "Choose Preferred time slot:",
-                      style: CustomTextStyles.bodyLargeGray700,
+                    SizedBox(height: 20.v),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 24.h),
+                        child: Text(
+                          "Choose Preferred time slot:",
+                          style: CustomTextStyles.bodyLargeGray700,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                SizedBox(height: 15.v),
-                _buildFrame3(context),
-                SizedBox(height: 5.v),
-                _buildFrame4(context),
-                SizedBox(height: 5.v),
-              ],
+                    SizedBox(height: 15.v),
+                    _buildFrame3(context),
+                    SizedBox(height: 5.v),
+                    _buildFrame4(context),
+                    SizedBox(height: 5.v),
+                  ],
+                ],
+              ),
             ),
           ),
         ),
         bottomNavigationBar: _buildButton2(context),
       ),
     );
+  }
+
+  void _openDescriptionDialog() async {
+    String? result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Add Description"),
+          content: TextField(
+            controller: descriptionController,
+            decoration:
+                InputDecoration(hintText: "Write your problem (max 40 words)"),
+            maxLength: 90,
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(null); // Cancel
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(descriptionController.text); // OK
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != null) {
+      setState(() {
+        userDescription = result;
+        previousDescription = result;
+      });
+    } else {
+      // User canceled, clear the previous description
+      setState(() {
+        userDescription = previousDescription;
+      });
+    }
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
@@ -412,15 +565,33 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
   }
 
   Widget _buildButton2(BuildContext context) {
+    bool isLocationSelected = AppState.userLocation != null;
+    bool isDateSelected = selectedDate != null;
+    bool isTimeSelected = selectedTimeIndex != -1;
+    bool isReasonSelected = isChecked ? selectedReason != null : true;
+
+    bool isButtonEnabled = isLocationSelected &&
+        ((isChecked && isReasonSelected) ||
+            (!isChecked && isDateSelected && isTimeSelected));
+
     return CustomElevatedButton(
-      text: "Confirm Booking",
+      text: isButtonEnabled
+          ? "Confirm Booking"
+          : "Please fill all required fields",
       margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 34.v),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => BookingConfirmationScreen()),
-        );
-      },
+      buttonStyle: isButtonEnabled
+          ? const ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(Colors.black))
+          : const ButtonStyle(),
+      onPressed: isButtonEnabled
+          ? () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => BookingConfirmationScreen()),
+              );
+            }
+          : null,
     );
   }
 

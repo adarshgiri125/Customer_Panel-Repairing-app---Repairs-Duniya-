@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class ListItemWidget extends StatefulWidget {
   final String itemName; // Add itemName property
   final List<dynamic> items;
-  final Null Function(dynamic selected) onSelectionChanged;
+  final void Function(List<String> selected) onSelectionChanged;
 
   const ListItemWidget({
     Key? key,
@@ -24,58 +24,37 @@ class _ListItemWidgetState extends State<ListItemWidget> {
   void initState() {
     super.initState();
     // Initialize isCircleBlankList based on the details fetched dynamically
-    isCircleBlankList = fetchDetails(widget.itemName);
+    isCircleBlankList = List.generate(widget.items.length, (index) => true);
   }
 
-  List<bool> fetchDetails(String itemName) {
-    // Use the appropriate list based on the itemName
-    if (itemName == 'AC') {
-      return List.generate(widget.items.length, (index) => true);
-    } else if (itemName == 'Lamp') {
-      return List.generate(widget.items.length, (index) => true);
-    } else if (itemName == 'Fan') {
-      return List.generate(widget.items.length, (index) => true);
-    } else if (itemName == 'Freeze') {
-      return List.generate(widget.items.length, (index) => true);
-    } else if (itemName == 'Television') {
-      return List.generate(widget.items.length, (index) => true);
-    } else if (itemName == 'Oven') {
-      return List.generate(widget.items.length, (index) => true);
-    } else if (itemName == 'Microwave') {
-      return List.generate(widget.items.length, (index) => true);
-    } else if (itemName == 'Washing Machine') {
-      return List.generate(widget.items.length, (index) => true);
-    }
-    // Add more conditions for other itemNames if needed
+  // List<bool> fetchDetails(String itemName) {
+  //   // Use the appropriate list based on the itemName
+  //   if (itemName == 'AC') {
+  //     return List.generate(widget.items.length, (index) => true);
+  //   } else if (itemName == 'Lamp') {
+  //     return List.generate(widget.items.length, (index) => true);
+  //   } else if (itemName == 'Fan') {
+  //     return List.generate(widget.items.length, (index) => true);
+  //   } else if (itemName == 'Freeze') {
+  //     return List.generate(widget.items.length, (index) => true);
+  //   } else if (itemName == 'Television') {
+  //     return List.generate(widget.items.length, (index) => true);
+  //   } else if (itemName == 'Oven') {
+  //     return List.generate(widget.items.length, (index) => true);
+  //   } else if (itemName == 'Microwave') {
+  //     return List.generate(widget.items.length, (index) => true);
+  //   } else if (itemName == 'Washing Machine') {
+  //     return List.generate(widget.items.length, (index) => true);
+  //   }
+  //   // Add more conditions for other itemNames if needed
 
-    // Default return if the itemName is not recognized
-    return [];
-  }
+  //   // Default return if the itemName is not recognized
+  //   return [];
+  // }
 
   String getItemTitle(int index) {
     // Use the appropriate list based on the itemName
-    if (widget.itemName == 'AC') {
-      return widget.items[index]['title'];
-    } else if (widget.itemName == 'Lamp') {
-      // Change 'Lamp' to 'lamp'
-      return widget.items[index]['title'];
-    } else if (widget.itemName == 'Fan') {
-      return widget.items[index]['title'];
-    } else if (widget.itemName == 'Freeze') {
-      return widget.items[index]['title'];
-    } else if (widget.itemName == 'Television') {
-      return widget.items[index]['title'];
-    } else if (widget.itemName == 'Oven') {
-      return widget.items[index]['title'];
-    } else if (widget.itemName == 'Microwave') {
-      return widget.items[index]['title'];
-    } else if (widget.itemName == 'Washing Machine') {
-      return widget.items[index]['title'];
-    }
-    // Add more conditions for other itemNames if needed
-
-    // Default return if the itemName is not recognized
-    return '';
+    return widget.items[index]['title'];
   }
 
   @override
@@ -96,7 +75,17 @@ class _ListItemWidgetState extends State<ListItemWidget> {
       onTap: () {
         setState(() {
           isCircleBlankList[index] = !isCircleBlankList[index];
-          widget.onSelectionChanged(isCircleBlankList);
+          print("isCircleBlankList: $isCircleBlankList");
+
+          // Use the widget.onSelectionChanged to update the selectedItems
+          widget.onSelectionChanged(
+            isCircleBlankList
+                .asMap()
+                .entries
+                .where((entry) => !entry.value)
+                .map((entry) => getItemTitle(entry.key))
+                .toList(),
+          );
         });
       },
       child: Column(
@@ -106,14 +95,14 @@ class _ListItemWidgetState extends State<ListItemWidget> {
               horizontal: 20.h,
               vertical: 15.v, // Adjusted vertical padding
             ),
-            decoration: AppDecoration.outlineBluegray10001.copyWith(
+            decoration: AppDecoration.outlineErrorContainer.copyWith(
               borderRadius: BorderRadiusStyle.roundedBorder10,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  width: 136.h,
+                  width: 215.h,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -162,7 +151,7 @@ class _ListItemWidgetState extends State<ListItemWidget> {
               ],
             ),
           ),
-          SizedBox(height: 10.v), // Add spacing between items
+          SizedBox(height: 20.v), // Add spacing between items
         ],
       ),
     );

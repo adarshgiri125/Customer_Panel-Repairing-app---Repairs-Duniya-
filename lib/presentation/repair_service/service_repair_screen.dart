@@ -11,19 +11,25 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class AcServiceRepairScreen extends StatelessWidget {
+class AcServiceRepairScreen extends StatefulWidget {
   final String imagePath;
   final String itemName;
 
   AcServiceRepairScreen({required this.imagePath, required this.itemName});
 
+  @override
+  _AcServiceRepairScreenState createState() => _AcServiceRepairScreenState();
+}
+
+class _AcServiceRepairScreenState extends State<AcServiceRepairScreen> {
   int sliderIndex = 1;
-  List<bool> selectedItems = []; // Declare selectedItems here
+  List<String> selectedItems = [];
+  late MediaQueryData mediaQueryData;
 
   @override
   Widget build(BuildContext context) {
-    print('Current itemName: $itemName');
     mediaQueryData = MediaQuery.of(context);
+
     return SafeArea(
       child: Scaffold(
         appBar: _buildAppBar(context),
@@ -38,12 +44,11 @@ class AcServiceRepairScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       Container(
-                        // Adjust constraints as needed
                         height: 200.v,
                         width: double.infinity,
                         child: CustomImageView(
-                          imagePath: imagePath,
-                          fit: BoxFit.contain, // Use BoxFit to fit the image
+                          imagePath: widget.imagePath,
+                          fit: BoxFit.contain,
                         ),
                       ),
                       SizedBox(height: 3.v),
@@ -74,7 +79,7 @@ class AcServiceRepairScreen extends StatelessWidget {
         },
       ),
       title: AppbarTitle(
-        text: itemName,
+        text: widget.itemName,
         margin: EdgeInsets.only(left: 9.h),
       ),
       actions: [
@@ -103,7 +108,9 @@ class AcServiceRepairScreen extends StatelessWidget {
               enableInfiniteScroll: false,
               scrollDirection: Axis.horizontal,
               onPageChanged: (index, reason) {
-                sliderIndex = index;
+                setState(() {
+                  sliderIndex = index;
+                });
               },
             ),
             itemCount: 1,
@@ -138,21 +145,21 @@ class AcServiceRepairScreen extends StatelessWidget {
 
   Widget _buildList(BuildContext context) {
     List<dynamic>? items;
-    if (itemName == 'AC') {
+    if (widget.itemName == 'AC') {
       items = AC;
-    } else if (itemName == 'Washing Machine') {
+    } else if (widget.itemName == 'Washing Machine') {
       items = WashingMachine;
-    } else if (itemName == 'Lamp') {
+    } else if (widget.itemName == 'Lamp') {
       items = Lamp;
-    } else if (itemName == 'Fan') {
+    } else if (widget.itemName == 'Fan') {
       items = Fan;
-    } else if (itemName == 'Freeze') {
+    } else if (widget.itemName == 'Freeze') {
       items = Freeze;
-    } else if (itemName == 'Television') {
+    } else if (widget.itemName == 'Television') {
       items = Television;
-    } else if (itemName == 'Oven') {
+    } else if (widget.itemName == 'Oven') {
       items = Oven;
-    } else if (itemName == 'Microwave') {
+    } else if (widget.itemName == 'Microwave') {
       items = Microwave;
     }
 
@@ -167,14 +174,16 @@ class AcServiceRepairScreen extends StatelessWidget {
             separatorBuilder: (context, index) {
               return SizedBox(height: 8.v);
             },
-            itemCount: 1, // Adjust the itemCount as needed
+            itemCount: 1,
             itemBuilder: (context, index) {
               return ListItemWidget(
                 items: items ?? [],
                 onSelectionChanged: (selected) {
-                  selectedItems = selected;
+                  setState(() {
+                    selectedItems = selected;
+                  });
                 },
-                itemName: itemName,
+                itemName: widget.itemName,
               );
             },
           ),
@@ -184,23 +193,27 @@ class AcServiceRepairScreen extends StatelessWidget {
   }
 
   Widget _buildBottomBar(BuildContext context) {
+    bool isProceedEnabled = selectedItems.isNotEmpty;
     return SizedBox(
       width: double.infinity,
       child: Padding(
         padding: EdgeInsets.all(20.h),
         child: CustomElevatedButton(
           text: "Proceed",
-          onPressed: () {
-            // Proceed to the next screen with the selected services
-            Navigator.pushNamed(
-              context,
-              AppRoutes.selectAddressScreen,
-              arguments: selectedItems,
-            );
-          },
-          buttonStyle: CustomButtonStyles.none,
-          decoration: CustomButtonStyles
-              .gradientPrimaryToOnErrorContainerTL16Decoration,
+          onPressed: isProceedEnabled
+              ? () {
+                  print("Selected Items: $selectedItems");
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.selectAddressScreen,
+                    arguments: selectedItems,
+                  );
+                }
+              : null,
+          buttonStyle: isProceedEnabled
+              ? const ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll(Colors.black))
+              : const ButtonStyle(),
           alignment: Alignment.center,
         ),
       ),

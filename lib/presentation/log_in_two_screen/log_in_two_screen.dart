@@ -125,25 +125,25 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
     );
   }
 
-  Widget _buildRememberForDays(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: EdgeInsets.only(left: 3.h),
-        child: CustomCheckboxButton(
-          alignment: Alignment.centerLeft,
-          text: "Remember for 30 days",
-          value: rememberForDays,
-          padding: EdgeInsets.symmetric(vertical: 1.v),
-          onChange: (value) {
-            setState(() {
-              rememberForDays = value;
-            });
-          },
-        ),
-      ),
-    );
-  }
+  // Widget _buildRememberForDays(BuildContext context) {
+  //   return Align(
+  //     alignment: Alignment.centerLeft,
+  //     child: Padding(
+  //       padding: EdgeInsets.only(left: 3.h),
+  //       child: CustomCheckboxButton(
+  //         alignment: Alignment.centerLeft,
+  //         text: "Remember for 30 days",
+  //         value: rememberForDays,
+  //         padding: EdgeInsets.symmetric(vertical: 1.v),
+  //         onChange: (value) {
+  //           setState(() {
+  //             rememberForDays = value;
+  //           });
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // verification of phone number (Authentication)
 

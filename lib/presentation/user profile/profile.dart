@@ -1,8 +1,6 @@
 import 'package:customer_app/app state/app_state.dart';
 import 'package:flutter/material.dart';
 
-
-
 class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -18,7 +16,7 @@ class Profile extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 80.0,
-              backgroundImage: AssetImage('assets/profile_image.jpg'),
+              backgroundImage: AssetImage('assets/images/img_ellipse_12.png'),
             ),
             SizedBox(height: 16.0),
             Text(
