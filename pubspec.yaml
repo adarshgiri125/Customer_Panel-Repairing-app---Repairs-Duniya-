@@ -22,6 +22,11 @@ dependencies:
   permission_handler: ^11.1.0
   geolocator: ^7.6.2
   geocoding: ^2.1.1
+  flutter_otp_text_field: ^1.1.1
+  cloud_firestore: ^4.13.6
+  firebase_messaging: ^14.7.9
+  http:
+  google_maps_webservice: ^0.0.20-nullsafety.5
 dev_dependencies: 
   flutter_test: 
     sdk: flutter

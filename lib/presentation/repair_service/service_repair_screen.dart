@@ -1,3 +1,4 @@
+import 'package:customer_app/app%20state/serviceDetails.dart';
 import 'package:customer_app/core/app_export.dart';
 import 'package:customer_app/presentation/item_list/list.dart';
 import 'package:customer_app/presentation/repair_service/widgets/list_item_widget.dart';
@@ -7,6 +8,7 @@ import 'package:customer_app/widgets/app_bar/appbar_title.dart';
 import 'package:customer_app/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:customer_app/widgets/app_bar/custom_app_bar.dart';
 import 'package:customer_app/widgets/custom_elevated_button.dart';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -25,6 +27,12 @@ class _AcServiceRepairScreenState extends State<AcServiceRepairScreen> {
   int sliderIndex = 1;
   List<String> selectedItems = [];
   late MediaQueryData mediaQueryData;
+
+  void initState() {
+    super.initState();
+    serviceDetails.serviceName =
+        widget.itemName; // Assign widget.itemName to ServiceName in initState
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,8 +161,8 @@ class _AcServiceRepairScreenState extends State<AcServiceRepairScreen> {
       items = Lamp;
     } else if (widget.itemName == 'Fan') {
       items = Fan;
-    } else if (widget.itemName == 'Freeze') {
-      items = Freeze;
+    } else if (widget.itemName == 'Fridge') {
+      items = Fridge;
     } else if (widget.itemName == 'Television') {
       items = Television;
     } else if (widget.itemName == 'Oven') {
@@ -203,6 +211,7 @@ class _AcServiceRepairScreenState extends State<AcServiceRepairScreen> {
           onPressed: isProceedEnabled
               ? () {
                   print("Selected Items: $selectedItems");
+                  serviceDetails.services = selectedItems;
                   Navigator.pushNamed(
                     context,
                     AppRoutes.selectAddressScreen,

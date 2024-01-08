@@ -5,6 +5,8 @@ import 'package:customer_app/widgets/custom_pin_code_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class OtpOneScreen extends StatefulWidget {
   final String verificationId;
@@ -19,11 +21,26 @@ class OtpOneScreen extends StatefulWidget {
 }
 
 class _OtpOneScreenState extends State<OtpOneScreen> {
+  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+
   final TextEditingController otpController = TextEditingController();
   bool flag = false;
   String otp = '';
+  String? deviceToken = '';
 
-  
+  @override
+  void initState() {
+    super.initState();
+    setupDeviceToken();
+  }
+
+  Future<void> setupDeviceToken() async {
+    try {
+      deviceToken = await _messaging.getToken();
+    } catch (e) {
+      print('Firebase initialization error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +196,6 @@ class _OtpOneScreenState extends State<OtpOneScreen> {
   }
 
   void _verifyOtp(BuildContext context, String enteredOtp) async {
-    // Perform OTP verification
     try {
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: widget.verificationId,
@@ -195,6 +211,9 @@ class _OtpOneScreenState extends State<OtpOneScreen> {
       if (userToken != null) {
         // Save login information
         saveLoginInfo(userToken);
+
+        // Add user details to Firestore
+        await _addUserToFirestore();
 
         // Navigate to the home page or any other screen upon successful verification
         Navigator.pushAndRemoveUntil(
@@ -274,6 +293,24 @@ class _OtpOneScreenState extends State<OtpOneScreen> {
       // Display an error message to the user
       setState(() {
         isResending = false;
+      });
+    }
+  }
+
+  Future<void> _addUserToFirestore() async {
+    // Get a reference to the "customers" collection in Firestore
+    CollectionReference customers =
+        FirebaseFirestore.instance.collection('customers');
+
+    // Get the current user
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // Add user details to Firestore
+      await customers.doc(user.uid).set({
+        'phone_number': widget.phoneNumber,
+        'user_id': user.uid,
+        'device_token': deviceToken, // Replace with the actual device token
       });
     }
   }

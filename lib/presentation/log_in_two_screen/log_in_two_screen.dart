@@ -174,7 +174,6 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
         print('Verification Failed: ${e.message}');
       },
       codeSent: (String verificationId, int? resendToken) {
-        AppState.userPhoneNumber = phoneNumber;
         // Navigate to OTP screen with verificationId
         Navigator.push(
           context,

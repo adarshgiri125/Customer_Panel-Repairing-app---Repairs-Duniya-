@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app%20state/app_state.dart';
+import 'package:customer_app/app%20state/serviceDetails.dart';
+import 'package:customer_app/presentation/home_page_screen/getNumber.dart';
 import 'package:customer_app/presentation/item_list/list.dart';
 import 'package:customer_app/presentation/home_page_screen/widgets/viewhierarchy_Item_widget.dart';
 import 'package:customer_app/presentation/location/location.dart';
@@ -6,9 +9,11 @@ import 'package:customer_app/presentation/repair_service/service_repair_screen.d
 import 'package:customer_app/presentation/searchService/DetailsPage.dart';
 import 'package:customer_app/presentation/user%20profile/profile.dart';
 import 'package:customer_app/widgets/app_bar/appbar_menu.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../home_page_screen/widgets/homepagestaggered_item_widget.dart';
 import 'package:customer_app/core/app_export.dart';
 import 'package:customer_app/widgets/custom_elevated_button.dart';
@@ -44,6 +49,20 @@ class _HomePageScreenState extends State<HomePageScreen> {
     showHalfPage = false;
     showLocation = false;
     _getCurrentLocation();
+    _initializePermission();
+  }
+
+  Future<void> _initializePermission() async {
+    bool isDenied = await Permission.notification.isDenied;
+    if (isDenied) {
+      print("Notification permission is denied. Requesting permission...");
+      await Permission.notification.request();
+      print("Notification permission requested.");
+    } else {
+      print("notification permission enabled");
+    }
+    String? phoneNumber = await getPhoneNumber();
+    serviceDetails.userPhoneNumber = phoneNumber;
   }
 
   Future<void> _getCurrentLocation() async {
@@ -56,12 +75,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
         );
 
         if (placemarks.isNotEmpty) {
-          Placemark placemark = placemarks.first;
-          String address =
-              "${placemark.name}, ${placemark.locality}, ${placemark.administrativeArea}";
-
           setState(() {
-            AppState.currentLocation =
+            serviceDetails.userLocation =
                 LatLng(locationData.latitude!, locationData.longitude!);
             // locationController.text = address;
             isLocationFetched = true;
@@ -108,37 +123,10 @@ class _HomePageScreenState extends State<HomePageScreen> {
                       textAlign: TextAlign.left,
                     ),
                   ),
-                  SizedBox(height: 6),
+                  SizedBox(height: 10),
                   _buildHomePageStaggered(context),
-                  SizedBox(height: 0),
-                  Container(
-                    height: 75,
-                    width: 75,
-                    margin: EdgeInsets.symmetric(
-                        horizontal: 24), // Adjusted padding
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 0,
-                      vertical: 0,
-                    ),
-                    decoration: AppDecoration.outlineBlueGray.copyWith(
-                      borderRadius: BorderRadiusStyle.roundedBorder7,
-                    ),
-                    child: CustomImageView(
-                      imagePath: ImageConstant.imgFrame5140235,
-                      height: 7,
-                      width: 42,
-                      alignment: Alignment.center,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 24), // Adjusted padding
-                    child: Text(
-                      "More",
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ),
-                  SizedBox(height: 28),
+                  SizedBox(height: 5),
+
                   _buildHomePageRow(context),
                   SizedBox(height: 33),
                   Padding(
@@ -151,7 +139,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   ),
                   SizedBox(height: 11),
                   _buildHomePageStack1(context),
-                  SizedBox(height: 79),
+                  SizedBox(height: 30),
                   ViewhierarchyItemWidget(),
                   SizedBox(height: 25),
                 ],
@@ -248,38 +236,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                       ),
                     ),
                     SizedBox(height: 14),
-                    // CustomTextFormField(
-                    //   controller: locationController,
-                    //   hintText: "Pick Your Location",
-                    //   hintStyle: CustomTextStyles.bodyMediumGray40002,
-                    //   prefix: Container(
-                    //     margin: EdgeInsets.fromLTRB(19, 9, 8, 9),
-                    //     child: CustomImageView(
-                    //       imagePath: ImageConstant.imgVector,
-                    //       height: 22,
-                    //       width: 20,
-                    //     ),
-                    //   ),
-                    //   prefixConstraints: BoxConstraints(
-                    //     maxHeight: 40,
-                    //   ),
-                    //   suffix: Container(
-                    //     margin: EdgeInsets.fromLTRB(30, 6, 12, 6),
-                    //     child: CustomImageView(
-                    //       imagePath: ImageConstant.imgDownChevron,
-                    //       height: 28,
-                    //       width: 24,
-                    //     ),
-                    //   ),
-                    //   suffixConstraints: BoxConstraints(
-                    //     maxHeight: 40,
-                    //   ),
-                    //   contentPadding: EdgeInsets.symmetric(vertical: 10),
-                    //   onChanged: (value) {},
-                    //   readOnly: isLocationFetched,
-                    // ),
                     SizedBox(height: 8),
-
                     CustomSearchView(
                       controller: searchController,
                       hintText: "Search an appliance or service",
@@ -293,7 +250,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
                       },
                       autofocus: false,
                     ),
-
                     SizedBox(height: 12),
                   ],
                 ),
@@ -310,13 +266,14 @@ class _HomePageScreenState extends State<HomePageScreen> {
     // Define a list of items with their respective image paths and names
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 24), // Adjusted padding
+      margin: EdgeInsets.symmetric(
+          horizontal: 24, vertical: 12), // Adjusted padding
       child: StaggeredGridView.countBuilder(
         shrinkWrap: true,
         primary: false,
         crossAxisCount: 8,
         crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+        mainAxisSpacing: 30,
         staggeredTileBuilder: (index) {
           return StaggeredTile.fit(2);
         },
@@ -347,7 +304,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
     );
   }
 
-  /// Section Widget
   Widget _buildHomePageRow(BuildContext context) {
     return Align(
       alignment: Alignment.center,
@@ -357,8 +313,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
           borderRadius: BorderRadiusStyle.roundedBorder10,
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: EdgeInsets.only(
@@ -397,11 +354,13 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 ],
               ),
             ),
+
+            // Added a small space between the text and the image
             CustomImageView(
               imagePath: ImageConstant.imgImage52,
-              height: 215.v,
-              width: 162.h,
-              margin: EdgeInsets.only(left: 2.h),
+              height: 223.v,
+              width: 123.h,
+              // margin: EdgeInsets.only(left: 2.h), // Removed the margin
             ),
           ],
         ),
@@ -411,161 +370,63 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
   /// Section Widget
   Widget _buildHomePageStack1(BuildContext context) {
-    return Align(
-      alignment: Alignment.center,
-      child: SizedBox(
-        height: 104.v,
-        width: 382.h,
-        child: Stack(
-          alignment: Alignment.bottomLeft,
-          children: [
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  right: 23.h,
-                  bottom: 1.v,
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 24), // Adjusted padding
+      child: StaggeredGridView.countBuilder(
+        shrinkWrap: true,
+        primary: false,
+        crossAxisCount: 8,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 30,
+        staggeredTileBuilder: (index) {
+          return StaggeredTile.fit(2);
+        },
+        itemCount: otheritems.length,
+        itemBuilder: (context, index) {
+          Map<String, dynamic> currentItem = otheritems[index];
+
+          return GestureDetector(
+            onTap: () {
+              // Navigate to the AcServiceRepairScreen and pass the data
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AcServiceRepairScreen(
+                    imagePath: currentItem["imagePath"],
+                    itemName: currentItem["itemName"],
+                  ),
                 ),
-                child: Text(
-                  "More",
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ),
+              );
+            },
+            child: HomepagestaggeredItemWidget(
+              imagePath: currentItem["imagePath"],
+              itemName: currentItem["itemName"],
             ),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                padding: EdgeInsets.only(left: 32.h),
-                child: Text(
-                  "Spa",
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: EdgeInsets.only(right: 114.h),
-                child: Text(
-                  "Painting",
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: 129.h,
-                  bottom: 1.v,
-                ),
-                child: Text(
-                  "Salon",
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 21.v),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      height: 83.adaptSize,
-                      width: 83.adaptSize,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 6.h,
-                        vertical: 16.v,
-                      ),
-                      decoration: AppDecoration.outlineBlueGray.copyWith(
-                        borderRadius: BorderRadiusStyle.roundedBorder7,
-                      ),
-                      child: CustomImageView(
-                        imagePath: ImageConstant.imgImage41,
-                        height: 48.v,
-                        width: 69.h,
-                        alignment: Alignment.center,
-                      ),
-                    ),
-                    Container(
-                      height: 83.adaptSize,
-                      width: 83.adaptSize,
-                      padding: EdgeInsets.all(2.h),
-                      decoration: AppDecoration.outlineBlueGray.copyWith(
-                        borderRadius: BorderRadiusStyle.roundedBorder7,
-                      ),
-                      child: CustomImageView(
-                        imagePath: ImageConstant.imgImage40,
-                        height: 76.adaptSize,
-                        width: 76.adaptSize,
-                        alignment: Alignment.center,
-                      ),
-                    ),
-                    Container(
-                      height: 83.adaptSize,
-                      width: 83.adaptSize,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 1.h,
-                        vertical: 15.v,
-                      ),
-                      decoration: AppDecoration.outlineBlueGray.copyWith(
-                        borderRadius: BorderRadiusStyle.roundedBorder7,
-                      ),
-                      child: CustomImageView(
-                        imagePath: ImageConstant.imgImage62,
-                        height: 50.v,
-                        width: 80.h,
-                        alignment: Alignment.center,
-                      ),
-                    ),
-                    Container(
-                      height: 83.adaptSize,
-                      width: 83.adaptSize,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 21.h,
-                        vertical: 37.v,
-                      ),
-                      decoration: AppDecoration.outlineBlueGray.copyWith(
-                        borderRadius: BorderRadiusStyle.roundedBorder7,
-                      ),
-                      child: CustomImageView(
-                        imagePath: ImageConstant.imgFrame5140235,
-                        height: 6.v,
-                        width: 39.h,
-                        alignment: Alignment.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
   void _showHalfPage(BuildContext context) {
-  Navigator.of(context).push(PageRouteBuilder(
-    opaque: false,
-    pageBuilder: (context, animation, secondaryAnimation) {
-      return SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0.0, -1.0),
-          end: Offset.zero,
-        ).animate(animation),
-        child: HalfPage(
-          onClose: () {
-            // Callback function to be invoked when the half page is closed
-            _hideHalfPage(context);
-          },
-        ),
-      );
-    },
-  ));
-}
+    Navigator.of(context).push(PageRouteBuilder(
+      opaque: false,
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0.0, -1.0),
+            end: Offset.zero,
+          ).animate(animation),
+          child: HalfPage(
+            onClose: () {
+              // Callback function to be invoked when the half page is closed
+              _hideHalfPage(context);
+            },
+          ),
+        );
+      },
+    ));
+  }
 
   void _hideHalfPage(BuildContext context) {
     // Use Navigator.pop(context) to remove the topmost route
@@ -577,8 +438,11 @@ class _HomePageScreenState extends State<HomePageScreen> {
   }
 
   void _showDetailsPage(String itemName) {
-    // Filter the items based on the user input
-    List<Map<String, dynamic>> filteredItems = items
+    // Combine items and otheritems into a single list
+    List<Map<String, dynamic>> allItems = [...items, ...otheritems];
+
+    // Filter the combined list based on the user input
+    List<Map<String, dynamic>> filteredItems = allItems
         .where((item) =>
             item["itemName"].toLowerCase().contains(userInput.toLowerCase()))
         .toList();

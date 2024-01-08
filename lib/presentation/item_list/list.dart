@@ -1,16 +1,30 @@
 import 'package:customer_app/core/utils/image_constant.dart';
 
 List<Map<String, dynamic>> items = [
-    {"imagePath": ImageConstant.imgImage38, "itemName": "AC"},
-    {"imagePath": ImageConstant.imgImage39, "itemName": "Lamp"},
-    {"imagePath": ImageConstant.imgImage36, "itemName": "Fan"},
-    {"imagePath": ImageConstant.imgImage34, "itemName": "Freeze"},
-    {"imagePath": ImageConstant.imgImage33, "itemName": "Television"},
-    {"imagePath": ImageConstant.imgImage32, "itemName": "Oven"},
-    {"imagePath": ImageConstant.imgImage29, "itemName": "Microwave"},
-    {"imagePath": ImageConstant.imgImage31, "itemName": "Washing Machine"},
-    // Add more items as needed
-  ];
+  {"imagePath": ImageConstant.imgImage38, "itemName": "AC"},
+  {"imagePath": ImageConstant.imgImage34, "itemName": "Fridge"},
+  {"imagePath": ImageConstant.imgImage31, "itemName": "Washing Machine"},
+  {"imagePath": ImageConstant.imgImage32, "itemName": "Geyser"},
+  {"imagePath": ImageConstant.imgImage32, "itemName": "Air Cooler"},
+  {"imagePath": ImageConstant.imgImage36, "itemName": "Ceiling Fan"},
+  
+
+  // {"imagePath": ImageConstant.imgImage33, "itemName": "Television"},
+
+  // {"imagePath": ImageConstant.imgImage29, "itemName": "Microwave"},
+
+  // Add more items as needed
+];
+
+List<Map<String, dynamic>> otheritems = [
+  {"imagePath": ImageConstant.imgImage38, "itemName": "Electrician"},
+  {"imagePath": ImageConstant.imgImage34, "itemName": "Plumber"},
+  {"imagePath": ImageConstant.imgImage31, "itemName": "Painter"},
+  {"imagePath": ImageConstant.imgImage32, "itemName": "Construction/Renovation"},
+
+];
+
+
 
 List<dynamic> AC = [
   {'title': 'AC Servicing'},
@@ -33,11 +47,11 @@ List<dynamic> Fan = [
   {'title': 'Bad smell from Fan'},
 ];
 
-List<dynamic> Freeze = [
-  {'title': 'Freeze Servicing'},
-  {'title': 'Freeze Cooling Issue'},
-  {'title': 'Freeze not turning on'},
-  {'title': 'Bad smell from Freeze'},
+List<dynamic> Fridge = [
+  {'title': 'Fridge Servicing'},
+  {'title': 'Fridge Cooling Issue'},
+  {'title': 'Fridge not turning on'},
+  {'title': 'Bad smell from Fridge'},
 ];
 
 List<dynamic> Television = [
@@ -67,5 +81,3 @@ List<dynamic> WashingMachine = [
   {'title': 'Washing Machine not turning on'},
   {'title': 'Bad smell from Washing Machine'},
 ];
-
-

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:customer_app/theme/theme_helper.dart';
 import 'package:customer_app/routes/app_routes.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -16,6 +17,13 @@ Future<void> main() async {
   ]);
 
   await Firebase.initializeApp();
+  await Permission.notification.isDenied.then((value) {
+    if (value) {
+      Permission.notification.request();
+    }
+  });
+
+  
 
   ///Please update theme as per your need if required.
   ThemeHelper().changeTheme('primary');

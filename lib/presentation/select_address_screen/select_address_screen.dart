@@ -1,7 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app%20state/app_state.dart';
+import 'package:customer_app/app%20state/serviceDetails.dart';
 import 'package:customer_app/core/app_export.dart';
+import 'package:customer_app/presentation/Backened%20Part/sendNotification.dart';
 import 'package:customer_app/presentation/booking_confirmation_screen/booking_confirmation_screen.dart';
+import 'package:customer_app/presentation/select_address_screen/SearchPage.dart';
+import 'package:customer_app/presentation/select_address_screen/sendData_Firebase.dart';
 import 'package:customer_app/widgets/app_bar/appbar_leading_image.dart';
 import 'package:customer_app/widgets/app_bar/appbar_title.dart';
 import 'package:customer_app/widgets/app_bar/appbar_trailing_image.dart';
@@ -14,6 +20,8 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
 class SelectAddressScreen extends StatefulWidget {
   SelectAddressScreen({Key? key}) : super(key: key);
@@ -26,6 +34,9 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
   TextEditingController floatingTextFieldController = TextEditingController();
   String address = "";
   bool showAdditionalContent = false;
+  List<dynamic> _placesList = [];
+  var uuid = const Uuid();
+  String? sessionToken = '1234';
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Completer<GoogleMapController> _mapController =
@@ -33,13 +44,9 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
 
   DateTime? selectedDate;
   LatLng _initialCameraPosition =
-      AppState.currentLocation ?? LatLng(12.9716, 77.5946);
+      serviceDetails.userLocation ?? LatLng(12.9716, 77.5946);
 
   bool isChecked = false;
-  String? selectedReason;
-  String? userDescription;
-  String? previousDescription;
-  final TextEditingController descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +108,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                                 color: Colors.black,
                               ),
                             ),
-                            SizedBox(height: 5.v),
+                            SizedBox(height: 10.v),
                             Text(
                               "Additional charge of Rs.80/- after service completion",
                               style: CustomTextStyles.bodyLargeGray700.copyWith(
@@ -110,75 +117,6 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                               ),
                             ),
                             SizedBox(height: 5.v),
-                            // Add DropdownButton or any other input widgets
-                            // for selecting the reason
-                            Center(
-                              child: DropdownButton<String>(
-                                hint: Text(
-                                  selectedReason ??
-                                      "Select Reason for urgent booking",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                items: [
-                                  "Reason 1",
-                                  "Reason 2",
-                                  "Reason is Not listed",
-                                  "Select Reason for urgent booking",
-                                  // Add more options as needed
-                                ].map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Center(
-                                      child: Text(
-                                        value,
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedReason = value;
-                                  });
-                                  // Handle the selected value
-                                },
-                              ),
-                            ),
-                            SizedBox(height: 5.v),
-                            // Add Description with text field
-                            GestureDetector(
-                              onTap: () {
-                                _openDescriptionDialog();
-                              },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Add Description",
-                                    style: CustomTextStyles.bodyLargeGray700
-                                        .copyWith(
-                                      fontSize: 14.0,
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 5.v),
-                            // Display the user's description
-                            if (userDescription != null &&
-                                userDescription!.isNotEmpty)
-                              Text(
-                                "Your Reason: $userDescription",
-                                style:
-                                    CustomTextStyles.bodyLargeGray700.copyWith(
-                                  fontSize: 14.0,
-                                  color: Colors.black,
-                                ),
-                              ),
                           ],
                         ),
                       ),
@@ -230,49 +168,6 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
     );
   }
 
-  void _openDescriptionDialog() async {
-    String? result = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Add Description"),
-          content: TextField(
-            controller: descriptionController,
-            decoration:
-                InputDecoration(hintText: "Write your problem (max 40 words)"),
-            maxLength: 90,
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(null); // Cancel
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(descriptionController.text); // OK
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (result != null) {
-      setState(() {
-        userDescription = result;
-        previousDescription = result;
-      });
-    } else {
-      // User canceled, clear the previous description
-      setState(() {
-        userDescription = previousDescription;
-      });
-    }
-  }
-
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 68.h,
@@ -312,30 +207,86 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
         color: Colors.black,
       ),
       onPressed: () async {
-        final GoogleMapController controller = await _mapController.future;
-        controller.animateCamera(CameraUpdate.newLatLng(
-          AppState.currentLocation ?? LatLng(0.0, 0.0),
-        ));
+        // final GoogleMapController controller = await _mapController.future;
+        // controller.animateCamera(CameraUpdate.newLatLng(
+        //   AppState.currentLocation ?? LatLng(12.9716, 77.5946),
+        // ));
+        await _getCurrentLocation();
       },
     );
   }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      final GoogleMapController controller = await _mapController.future;
+      controller.animateCamera(CameraUpdate.newLatLng(LatLng(position.latitude,
+          position.longitude))); // Move camera to current location
+
+      await _updateMarkerPosition(
+          LatLng(position.latitude, position.longitude));
+
+      // Fetch address from coordinates
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      Placemark place = placemarks.isNotEmpty ? placemarks[0] : Placemark();
+
+      address =
+          "${place.street}, ${place.locality}, ${place.postalCode}, ${place.country}";
+
+      if (address != null) {
+        floatingTextFieldController.text = address;
+      } else {
+        floatingTextFieldController.text = "choose correct location";
+      }
+
+      serviceDetails.userLocation =
+          LatLng(position.latitude, position.longitude);
+      serviceDetails.address = address;
+    } catch (e) {
+      print("Error getting current location: $e");
+    }
+  }
+
+  bool shouldUpdateCameraPosition = true;
 
   Widget _buildFrame(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(top: 8.0),
       child: Column(
         children: [
-          CustomSearchView(
-            controller: floatingTextFieldController,
-            hintText: "Search other Location",
-            onChanged: (value) {
-              // Update the text of the controller
-              floatingTextFieldController.text = value;
+          TextField(
+            onTap: () async {
+              final searchValue = await Navigator.push<String>(
+                context,
+                MaterialPageRoute(builder: (context) => SearchPage()),
+              );
+
+              if (searchValue != null && searchValue.isNotEmpty) {
+                setState(() {
+                  address = searchValue;
+                });
+                _updateMapWithSearch(searchValue);
+              }
             },
-            onSubmitted: (value) {
-              _updateMapWithSearch(value);
-            },
-            autofocus: false,
+            readOnly: true,
+            decoration: InputDecoration(
+              labelText: 'Ping your Location',
+              suffixIcon: Icon(Icons.search),
+              // Set the text color here
+              labelStyle: TextStyle(color: Colors.black),
+              // Set the cursor color
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+            ),
+            style: TextStyle(
+                color: Colors.black), // Set the text color of the entered text
+            controller: TextEditingController(text: address),
           ),
           SizedBox(
             height: 400.v,
@@ -382,7 +333,9 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
     );
   }
 
-  void _updateCameraPosition(GoogleMapController controller) async {
+  Future<void> _updateCameraPosition(GoogleMapController controller) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+
     LatLngBounds visibleRegion = await controller.getVisibleRegion();
     LatLng center = LatLng(
       (visibleRegion.southwest.latitude + visibleRegion.northeast.latitude) / 2,
@@ -442,26 +395,35 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
   }
 
   Future<void> _updateMarkerPosition(LatLng newPosition) async {
-    setState(() {
-      _initialCameraPosition = newPosition;
-    });
+    try {
+      setState(() {
+        _initialCameraPosition = newPosition;
+      });
 
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      newPosition.latitude,
-      newPosition.longitude,
-    );
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        newPosition.latitude,
+        newPosition.longitude,
+      );
 
-    Placemark place = placemarks.isNotEmpty ? placemarks[0] : Placemark();
+      Placemark place = placemarks.isNotEmpty ? placemarks[0] : Placemark();
 
-    address =
-        "${place.street}, ${place.locality}, ${place.postalCode}, ${place.country}";
+      address =
+          "${place.street}, ${place.locality}, ${place.postalCode}, ${place.country}";
 
-    if (address != null) {
-      floatingTextFieldController.text = address;
+      if (address != null) {
+        floatingTextFieldController.text = address;
+      } else {
+        floatingTextFieldController.text = "choose correct location";
+      }
+
+      serviceDetails.userLocation = newPosition;
+      serviceDetails.address = address;
+    } catch (e) {
+      // Handle the exception, for example, print the error message
+      print("Error in _updateMarkerPosition: $e");
+      // You can also throw the exception again if you want to propagate it further
+      throw e;
     }
-
-    AppState.userLocation = newPosition;
-    AppState.address = address;
   }
 
   Widget _buildButton1(BuildContext context) {
@@ -486,11 +448,14 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    DateTime currentDate = DateTime.now();
+    DateTime lastSelectableDate = currentDate.add(Duration(days: 3));
+
     DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(DateTime.now().year + 5),
+      initialDate: currentDate,
+      firstDate: currentDate,
+      lastDate: lastSelectableDate,
     );
 
     if (pickedDate != null) {
@@ -565,12 +530,13 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
   }
 
   Widget _buildButton2(BuildContext context) {
-    bool isLocationSelected = AppState.userLocation != null;
+    bool isLocationSelected = serviceDetails.userLocation != null;
     bool isDateSelected = selectedDate != null;
     bool isTimeSelected = selectedTimeIndex != -1;
-    bool isReasonSelected = isChecked ? selectedReason != null : true;
+    bool isReasonSelected = isChecked;
 
-    bool isButtonEnabled = isLocationSelected &&
+    bool isButtonEnabled =
+        // isLocationSelected &&
         ((isChecked && isReasonSelected) ||
             (!isChecked && isDateSelected && isTimeSelected));
 
@@ -585,6 +551,22 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
           : const ButtonStyle(),
       onPressed: isButtonEnabled
           ? () {
+              serviceDetails.address = address;
+              serviceDetails.serviceDate = selectedDate;
+              serviceDetails.timeIndex = selectedTimeIndex;
+              serviceDetails.userLocation = serviceDetails.userLocation;
+              serviceDetails.userPhoneNumber = serviceDetails.userPhoneNumber;
+              serviceDetails.urgentBooking = isChecked;
+
+              deleteOldServiceDetails();
+              storeServiceDetails();
+
+              // sendNotificationsToNearbyTechnicians(
+              //     serviceName!,
+              //     serviceDetails.userLocation!.latitude,
+              //     serviceDetails.userLocation!.longitude);
+              sendNotificationsToNearbyTechnicians(
+                  serviceName!, 12.9716, 77.5946);
               Navigator.push(
                 context,
                 MaterialPageRoute(

@@ -29,11 +29,11 @@ class HalfPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _buildContainer(
-                      'assets/images/image 64home.png',
-                      'Home',
+                      'assets/images/image 64home.png','Home',
                     ),
                     _buildContainer(
                         'assets/images/image 63booking.png', 'My Booking'),
+
                     _buildContainer('assets/images/reward.png', 'Rewards'),
                   ],
                 ),
