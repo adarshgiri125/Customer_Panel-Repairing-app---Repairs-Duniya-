@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:customer_app/app%20state/app_state.dart';
 import 'package:customer_app/app%20state/serviceDetails.dart';
 import 'package:customer_app/core/app_export.dart';
 import 'package:customer_app/presentation/Backened%20Part/sendNotification.dart';
@@ -15,12 +12,10 @@ import 'package:customer_app/widgets/app_bar/custom_app_bar.dart';
 import 'package:customer_app/widgets/custom_checkbox_button.dart';
 import 'package:customer_app/widgets/custom_elevated_button.dart';
 import 'package:customer_app/widgets/custom_outlined_button.dart';
-import 'package:customer_app/widgets/custom_search_view.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
 class SelectAddressScreen extends StatefulWidget {
@@ -34,9 +29,6 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
   TextEditingController floatingTextFieldController = TextEditingController();
   String address = "";
   bool showAdditionalContent = false;
-  List<dynamic> _placesList = [];
-  var uuid = const Uuid();
-  String? sessionToken = '1234';
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Completer<GoogleMapController> _mapController =
@@ -91,8 +83,6 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                   ),
                   SizedBox(height: 9.v),
                   if (showAdditionalContent) ...[
-                    // Additional content when checkbox is checked
-                    // You can customize this part based on your requirements
                     SizedBox(height: 10.v),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -108,7 +98,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                                 color: Colors.black,
                               ),
                             ),
-                            SizedBox(height: 10.v),
+                            SizedBox(height: 15.v),
                             Text(
                               "Additional charge of Rs.80/- after service completion",
                               style: CustomTextStyles.bodyLargeGray700.copyWith(

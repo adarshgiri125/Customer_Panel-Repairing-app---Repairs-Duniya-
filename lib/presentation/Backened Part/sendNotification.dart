@@ -1,17 +1,15 @@
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:customer_app/app%20state/serviceDetails.dart';
 import 'package:firebase_phone_auth_handler/firebase_phone_auth_handler.dart';
 import 'package:http/http.dart' as http;
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_webservice/places.dart';
 
 String? serviceName = serviceDetails.serviceName;
 String? phoneNumber = serviceDetails.userPhoneNumber;
+String? documentName = serviceDetails.serviceDocumentName;
 FirebaseAuth auth = FirebaseAuth.instance;
-User? user = auth.currentUser;
+String? user = auth.currentUser?.uid;
 
 String? address = serviceDetails.address;
 Future<void> sendNotificationsToNearbyTechnicians(
@@ -21,6 +19,8 @@ Future<void> sendNotificationsToNearbyTechnicians(
 ) async {
   print("Sending notifications to nearby technicians...");
   print("phoneNumber is : $phoneNumber");
+  print("document is : ${serviceDetails.serviceDocumentName}");
+  print("user is : $user");
 
   List<DocumentSnapshot> nearbyTechnicians = await getNearbyTechnicians(
     serviceName,
@@ -50,7 +50,7 @@ Future<void> sendNotificationsToNearbyTechnicians(
 
     DocumentReference candoRef = FirebaseFirestore.instance
         .collection("customers")
-        .doc(user?.uid)
+        .doc(user)
         .collection("serviceDetails")
         .doc(serviceDetails.serviceDocumentName);
 
@@ -61,12 +61,18 @@ Future<void> sendNotificationsToNearbyTechnicians(
     notificationFormat(technicianUserID, address, phoneNumber, userDeviceToken);
 
     print("Waiting for technician $technicianUserID response...");
-    bool jobAccepted = await isJobAccepted(candoRef);
+
+    bool jobAccepted = await Future.wait([
+      Future.delayed(Duration(seconds: 1)),
+      isJobAccepted(candoRef),
+    ]).then((results) => results[1] as bool);
+
+    // bool jobAccepted = await isJobAccepted(candoRef);
 
     // Continue sending notifications to other technicians even if one accepts the job
     if (jobAccepted) {
       print(
-          "Job accepted by technician $technicianUserID. Continuing to send notifications.");
+          "Job accepted by technician $technicianUserID. Stop to send notifications.");
       break;
     }
   }
@@ -75,19 +81,12 @@ Future<void> sendNotificationsToNearbyTechnicians(
 Future<bool> isJobAccepted(DocumentReference jobAcceptedRef) async {
   try {
     Completer<bool> responseCompleter = Completer<bool>();
-    Future.delayed(Duration(seconds: 30), () {
-      if (!responseCompleter.isCompleted) {
-        // If 30 seconds passed and the completer is not completed, mark as false
-        print("Technician did not respond within 30 seconds.");
-        responseCompleter.complete(false);
-      }
-    });
     // Explicitly cast the result to the correct type
     DocumentSnapshot<Map<String, dynamic>> snapshot =
         await jobAcceptedRef.get() as DocumentSnapshot<Map<String, dynamic>>;
 
     // Check if the snapshot exists and 'accepted' is true
-    return snapshot.exists && snapshot.data()?["jobAcceptance"] == true;
+    return snapshot.exists && snapshot.data()?['jobAcceptance'] == true;
   } catch (e) {
     print("Error checking job acceptance status: $e");
     return false;
@@ -115,6 +114,7 @@ notificationFormat(receiverID, address, phoneNumber, userDeviceToken) async {
     "status": "done",
     "phonenumber": phoneNumber,
     "documentName": serviceDetails.serviceDocumentName,
+    "user": user,
   };
 
   Map notificationFormat = {

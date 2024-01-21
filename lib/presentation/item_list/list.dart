@@ -27,14 +27,14 @@ List<Map<String, dynamic>> otheritems = [
 
 
 List<dynamic> AC = [
-  {'title': 'AC Servicing'},
+  {'title': 'ghguhuh'},
   {'title': 'AC Cooling Issue'},
   {'title': 'AC not turning on'},
   {'title': 'Bad smell from AC'},
 ];
 
 List<dynamic> Lamp = [
-  {'title': 'Lamp Servicing'},
+  {'title': 'ftfhg'},
   {'title': 'Lamp Cooling Issue'},
   {'title': 'Lamp pnot turning on'},
   {'title': 'Lamp smell from AC'},

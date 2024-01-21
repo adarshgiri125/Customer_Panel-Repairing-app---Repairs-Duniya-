@@ -11,10 +11,14 @@ void storeServiceDetails() async {
 
     // Generate a unique document name
     String documentName = DateTime.now().millisecondsSinceEpoch.toString();
+    
 
     // Create a reference to the 'customers' collection
     CollectionReference customers =
         FirebaseFirestore.instance.collection('customers');
+
+    serviceDetails.serviceDocumentName = documentName;
+    serviceDetails.user = user;
 
     // Add a new document with a generated ID
     await customers
@@ -25,14 +29,13 @@ void storeServiceDetails() async {
       'address': serviceDetails.address,
       'serviceDate': serviceDetails.serviceDate,
       'timeIndex': serviceDetails.timeIndex,
-      'urgentBooking' : serviceDetails.urgentBooking,
-      'jobAcceptance' : false,
+      'urgentBooking': serviceDetails.urgentBooking,
+      'jobAcceptance': false,
       // 'userLocation': GeoPoint(serviceDetails.userLocation!.latitude,
       //     serviceDetails.userLocation!.longitude),
       'userPhoneNumber': serviceDetails.userPhoneNumber,
     });
-    serviceDetails.serviceDocumentName = documentName;
-    serviceDetails.user = user;
+
     print('Service details stored successfully.');
   }
 }

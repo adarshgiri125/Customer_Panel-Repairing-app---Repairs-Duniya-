@@ -1,6 +1,9 @@
 import 'package:customer_app/theme/app_decoration.dart';
 import 'package:flutter/material.dart';
 
+import '../../presentation/home_page_screen/home_page_screen.dart';
+import '../../presentation/myBooking/mybooking.dart';
+
 class HalfPage extends StatelessWidget {
   final VoidCallback onClose;
 
@@ -8,64 +11,84 @@ class HalfPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double bottomMargin = MediaQuery.of(context).viewInsets.bottom + 20;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: GestureDetector(
-        onTap: () {
-          onClose();
-        },
+        onTap: onClose,
         child: Container(
-          height: 300, // Set a fixed height
+          height: screenHeight * 0.4, // Set a percentage of the screen height
           margin: EdgeInsets.only(
-            top: 60,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+            top: screenHeight * 0.1, // Set a percentage of the screen height
+            bottom: bottomMargin,
           ),
           decoration: AppDecoration.gradientAmberToErrorContainer,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                // Rows for the containers
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildContainer(
-                      'assets/images/image 64home.png','Home',
-                    ),
-                    _buildContainer(
-                        'assets/images/image 63booking.png', 'My Booking'),
-
-                    _buildContainer('assets/images/reward.png', 'Rewards'),
-                  ],
-                ),
-                SizedBox(height: 25),
-                Row(
-                  children: [
-                    SizedBox(
-                        width: 15), // Add space to align "Name 4" with "Name 1"
-                    _buildContainer('assets/images/image 68buy appliance.png',
-                        'Buy Appliance'),
-                    SizedBox(width: 15),
-                    _buildContainer(
-                        'assets/images/image 67help and support.png',
-                        'Help & Support'),
-                  ],
-                ),
-
-                // Row for the cross button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: onClose,
-                      icon: Icon(Icons.close, color: Colors.white, size: 40),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Rows for the containers
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildClickableContainer(
+                    'assets/images/image 64home.png',
+                    'Home',
+                        () => _navigateToHomeScreen(context),
+                  ),
+                  _buildClickableContainer(
+                    'assets/images/image 63booking.png',
+                    'My Booking',
+                        () => _navigateToBookingScreen(context),
+                  ),
+                  _buildClickableContainer(
+                    'assets/images/reward.png',
+                    'Rewards',
+                        () => _navigateToRewardsScreen(context),
+                  ),
+                ],
+              ),
+              SizedBox(height: 25),
+              Row(
+                children: [
+                  SizedBox(width: 15),
+                  _buildClickableContainer(
+                    'assets/images/image 68buy appliance.png',
+                    'Buy Appliance',
+                        () => _navigateToBuyApplianceScreen(context),
+                  ),
+                  SizedBox(width: 15),
+                  _buildClickableContainer(
+                    'assets/images/image 67help and support.png',
+                    'Help & Support',
+                        () => _navigateToHelpScreen(context),
+                  ),
+                ],
+              ),
+              // Row for the cross button
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: onClose,
+                    icon: Icon(Icons.close, color: Colors.white, size: 40),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
+        ),
+    );
+  }
+
+  Widget _buildClickableContainer(String imagePath, String name, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: _buildContainer(imagePath, name),
     );
   }
 
@@ -79,7 +102,7 @@ class HalfPage extends StatelessWidget {
             shape: BoxShape.circle,
             image: DecorationImage(
               fit: BoxFit.cover,
-              image: AssetImage(imagePath), // Use your actual image path
+              image: AssetImage(imagePath),
             ),
           ),
         ),
@@ -88,8 +111,84 @@ class HalfPage extends StatelessWidget {
           name,
           style: TextStyle(fontSize: 16, color: Colors.black),
         ),
-        // Remove SizedBox to reduce extra space
       ],
+    );
+  }
+
+  void _navigateToHomeScreen(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomePageScreen()),
+    );
+  }
+
+  void _navigateToBookingScreen(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => ServiceDetailsList()),
+    );
+  }
+
+  void _navigateToRewardsScreen(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => RewardsScreen()),
+    );
+  }
+
+  void _navigateToBuyApplianceScreen(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => BuyApplianceScreen()),
+    );
+  }
+
+  void _navigateToHelpScreen(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HelpScreen()),
+    );
+  }
+}
+
+class RewardsScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Rewards'),
+      ),
+      body: Center(
+        child: Text('This is the Rewards screen'),
+      ),
+    );
+  }
+}
+
+class BuyApplianceScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Buy Appliance'),
+      ),
+      body: Center(
+        child: Text('This is the Buy Appliance screen'),
+      ),
+    );
+  }
+}
+
+class HelpScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Help & Support'),
+      ),
+      body: Center(
+        child: Text('This is the Help & Support screen'),
+      ),
     );
   }
 }

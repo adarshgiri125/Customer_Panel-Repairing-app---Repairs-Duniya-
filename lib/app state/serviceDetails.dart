@@ -13,4 +13,5 @@ class serviceDetails {
   static User? user;
   static bool? urgentBooking;
   static String? userName;
+  
 }
