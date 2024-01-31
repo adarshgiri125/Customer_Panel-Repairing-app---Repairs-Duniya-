@@ -57,13 +57,12 @@ Future<void> sendNotificationsToNearbyTechnicians(
     // Send notification to technician
     print("Sending notification to technician $technicianUserID...");
 
-    // Send notification
     notificationFormat(technicianUserID, address, phoneNumber, userDeviceToken);
 
     print("Waiting for technician $technicianUserID response...");
 
     bool jobAccepted = await Future.wait([
-      Future.delayed(Duration(seconds: 1)),
+      Future.delayed(Duration(seconds: 180)),
       isJobAccepted(candoRef),
     ]).then((results) => results[1] as bool);
 

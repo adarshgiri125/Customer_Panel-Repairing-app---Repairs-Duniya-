@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app%20state/app_state.dart';
 import 'package:customer_app/app%20state/serviceDetails.dart';
+import 'package:customer_app/presentation/Backened%20Part/Notification.dart';
+import 'package:customer_app/presentation/Backened%20Part/getNotification.dart';
 import 'package:customer_app/presentation/home_page_screen/getNumber.dart';
 import 'package:customer_app/presentation/item_list/list.dart';
 import 'package:customer_app/presentation/home_page_screen/widgets/viewhierarchy_Item_widget.dart';
 import 'package:customer_app/presentation/location/location.dart';
-import 'package:customer_app/presentation/repair_service/service_repair_screen.dart';
+import 'package:customer_app/presentation/ServiceDetails/service_repair_screen.dart';
 import 'package:customer_app/presentation/searchService/DetailsPage.dart';
 import 'package:customer_app/presentation/user%20profile/profile.dart';
 import 'package:customer_app/widgets/app_bar/appbar_menu.dart';
@@ -42,6 +44,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   bool isLocationFetched = false;
 
   String userInput = "";
+  
 
   @override
   void initState() {
@@ -50,6 +53,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
     showLocation = false;
     _getCurrentLocation();
     _initializePermission();
+    PushNotificationSystem notificationSystem = PushNotificationSystem();
+    notificationSystem.whenNotificationReceived(context);
   }
 
   Future<void> _initializePermission() async {
@@ -225,6 +230,13 @@ class _HomePageScreenState extends State<HomePageScreen> {
                           GestureDetector(
                             onTap: () {
                               // Handle the tap event for this image
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => NotificationPage(
+                                          notifications: [],
+                                        )),
+                              );
                             },
                             child: CustomImageView(
                               imagePath: ImageConstant.imgGroup5139931,
@@ -387,6 +399,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
           return GestureDetector(
             onTap: () {
+              
               // Navigate to the AcServiceRepairScreen and pass the data
               Navigator.push(
                 context,
@@ -394,6 +407,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   builder: (context) => AcServiceRepairScreen(
                     imagePath: currentItem["imagePath"],
                     itemName: currentItem["itemName"],
+                    
                   ),
                 ),
               );

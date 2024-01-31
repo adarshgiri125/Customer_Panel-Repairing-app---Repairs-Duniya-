@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class ServiceDetailsList extends StatelessWidget {
   @override
@@ -17,22 +18,38 @@ class ServiceDetailsList extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            // Use ListView.builder to create a scrollable list of cards
-            return ListView.builder(
+            // Use ListView.separated to create a scrollable list of cards with separators
+            return ListView.separated(
               itemCount: snapshot.data!.length,
+              separatorBuilder: (BuildContext context, int index) =>
+                  SizedBox(height: 15.0), // Add spacing between cards
               itemBuilder: (context, index) {
                 var data = snapshot.data![index];
 
                 // Determine background color based on jobAcceptance
-                Color backgroundColor = data['jobAcceptance'] ? Colors.green : Colors.red;
+                Color backgroundColor = data['jobAcceptance']
+                    ? Colors.green
+                    : Color.fromARGB(255, 230, 185, 5);
 
                 // Build a Card with service details
                 return Card(
                   color: backgroundColor,
                   child: ListTile(
-                    title: Text('Address: ${data['address']}'),
-                    subtitle: Text('Service Date: ${data['serviceDate']}'),
-                    // Add more fields as needed
+                    title: Text('ServiceName: ${data['serviceName']}'),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Services: ${data['serviceList']}'),
+                        Text(
+                            'Date: ${DateFormat('dd-MM-yyyy').format(data['DateTime'].toDate())}'),
+                        Text(
+                            'Time: ${DateFormat('HH:mm:ss').format(data['DateTime'].toDate())}'),
+                        data['jobAcceptance']
+                            ? Text('Status: BOOKING HAS ACCEPTED')
+                            : Text('Status: BOOKING HAS NOT ACCEPTED YET'),
+                        // Add more fields as needed
+                      ],
+                    ),
                   ),
                 );
               },
@@ -52,14 +69,16 @@ class ServiceDetailsList extends StatelessWidget {
 
       // Reference to the 'customers' collection
       CollectionReference customers =
-      FirebaseFirestore.instance.collection('customers');
+          FirebaseFirestore.instance.collection('customers');
 
       // Reference to the 'serviceDetails' subcollection
       CollectionReference serviceDetailsCollection =
-      customers.doc(userId).collection('serviceDetails');
+          customers.doc(userId).collection('serviceDetails');
 
-      // Get all documents in the 'serviceDetails' collection
-      QuerySnapshot snapshot = await serviceDetailsCollection.get();
+      // Get all documents in the 'serviceDetails' collection, ordered by 'DateTime' in descending order
+      QuerySnapshot snapshot = await serviceDetailsCollection
+          .orderBy('DateTime', descending: true)
+          .get();
 
       // Convert each document to a map and add to the list
       List<Map<String, dynamic>> serviceDetailsList = snapshot.docs.map((doc) {
@@ -71,6 +90,10 @@ class ServiceDetailsList extends StatelessWidget {
           'urgentBooking': data['urgentBooking'],
           'jobAcceptance': data['jobAcceptance'],
           'userPhoneNumber': data['userPhoneNumber'],
+          'serviceName': data['serviceName'],
+          'serviceList': data['serviceList'],
+          'DateTime': data['DateTime'],
+          'jobAcceptance': data['jobAcceptance']
         };
       }).toList();
 

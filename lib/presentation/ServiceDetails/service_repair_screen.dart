@@ -1,8 +1,8 @@
 import 'package:customer_app/app%20state/serviceDetails.dart';
 import 'package:customer_app/core/app_export.dart';
 import 'package:customer_app/presentation/item_list/list.dart';
-import 'package:customer_app/presentation/repair_service/widgets/list_item_widget.dart';
-import 'package:customer_app/presentation/repair_service/widgets/viewhierarchy1_item_widget.dart';
+import 'package:customer_app/presentation/ServiceDetails/widgets/list_item_widget.dart';
+import 'package:customer_app/presentation/ServiceDetails/widgets/viewhierarchy1_item_widget.dart';
 import 'package:customer_app/widgets/app_bar/appbar_leading_image.dart';
 import 'package:customer_app/widgets/app_bar/appbar_title.dart';
 import 'package:customer_app/widgets/app_bar/appbar_trailing_image.dart';
@@ -157,18 +157,22 @@ class _AcServiceRepairScreenState extends State<AcServiceRepairScreen> {
       items = AC;
     } else if (widget.itemName == 'Washing Machine') {
       items = WashingMachine;
-    } else if (widget.itemName == 'Lamp') {
-      items = Lamp;
-    } else if (widget.itemName == 'Fan') {
-      items = Fan;
+    } else if (widget.itemName == 'Ceiling Fan') {
+      items = CeilingFan;
+    } else if (widget.itemName == 'Geyser') {
+      items = Geyser;
     } else if (widget.itemName == 'Fridge') {
       items = Fridge;
-    } else if (widget.itemName == 'Television') {
-      items = Television;
-    } else if (widget.itemName == 'Oven') {
-      items = Oven;
-    } else if (widget.itemName == 'Microwave') {
-      items = Microwave;
+    } else if (widget.itemName == 'Air Cooler') {
+      items = AirCooler;
+    } else if (widget.itemName == 'Plumber') {
+      items = Plumber;
+    } else if (widget.itemName == 'Electrician') {
+      items = Electrician;
+    } else if (widget.itemName == 'Painter') {
+      items = Painter;
+    } else if (widget.itemName == 'Construction/Renovation') {
+      items = Construction;
     }
 
     return Center(

@@ -59,14 +59,12 @@ class ImageConstant {
   static String imgImage50 = '$imagePath/img_image_50.png';
 
   static String imgImage51 = '$imagePath/img_image_51.png';
-  
+
   static String imgImage54 = '$imagePath/img_image_54.png';
 
   static String imgImage55 = '$imagePath/img_image_55.png';
 
   static String imgImage56 = '$imagePath/img_image_56.png';
-
-  
 
   // Log in Two images
   static String imgEllipse12 = '$imagePath/img_ellipse_12.png';
@@ -86,7 +84,16 @@ class ImageConstant {
   static String imgVector = '$imagePath/img_vector.png';
 
   static String imageNotFound = 'assets/images/image_not_found.png';
-  
+
   static String imgImage42 = '$imagePath/img_image_42.png';
+
+  static String electrician = '$imagePath/electrician.png';
+
+  static String plumber = '$imagePath/plumber.png';
   
+
+  static String painter = '$imagePath/painter.png';
+  static String construction = '$imagePath/construction.png';
+
+
 }

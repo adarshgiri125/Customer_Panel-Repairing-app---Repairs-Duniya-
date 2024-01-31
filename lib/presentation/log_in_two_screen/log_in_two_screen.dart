@@ -19,6 +19,7 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
   bool rememberForDays = false;
   String phoneNumber = '';
   bool flag = false;
+  bool isLoading = false;
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -114,6 +115,11 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
                       _verifyPhoneNumber();
                     },
                   ),
+                  if (isLoading) SizedBox(height: 20),
+                  if (isLoading)
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                    ),
                   SizedBox(height: 33.v),
                   SizedBox(height: 5.v),
                 ],
@@ -148,6 +154,9 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
   // verification of phone number (Authentication)
 
   void _verifyPhoneNumber() async {
+    setState(() {
+      isLoading = true; // Set isLoading to true when the button is pressed
+    });
     String phoneNumber = '+91' + phoneNumberController.text.trim();
 
     // Perform phone number validation if needed
@@ -185,6 +194,10 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
       },
       codeAutoRetrievalTimeout: (String verificationId) {
         // Handle code auto-retrieval timeout
+        setState(() {
+          isLoading =
+              false; // Set isLoading to false when the process is complete
+        });
       },
     );
   }

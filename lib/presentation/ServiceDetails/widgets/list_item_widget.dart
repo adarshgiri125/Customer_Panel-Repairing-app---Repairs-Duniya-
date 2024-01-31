@@ -18,42 +18,15 @@ class ListItemWidget extends StatefulWidget {
 }
 
 class _ListItemWidgetState extends State<ListItemWidget> {
-  late List<bool> isCircleBlankList; // Declare isCircleBlankList as late
+  late List<bool> isCircleBlankList;
 
   @override
   void initState() {
     super.initState();
-    // Initialize isCircleBlankList based on the details fetched dynamically
-    isCircleBlankList = List.generate(widget.items.length, (index) => true);
+    isCircleBlankList = List.generate(widget.items.length, (index) => false);
   }
 
-  // List<bool> fetchDetails(String itemName) {
-  //   // Use the appropriate list based on the itemName
-  //   if (itemName == 'AC') {
-  //     return List.generate(widget.items.length, (index) => true);
-  //   } else if (itemName == 'Lamp') {
-  //     return List.generate(widget.items.length, (index) => true);
-  //   } else if (itemName == 'Fan') {
-  //     return List.generate(widget.items.length, (index) => true);
-  //   } else if (itemName == 'Freeze') {
-  //     return List.generate(widget.items.length, (index) => true);
-  //   } else if (itemName == 'Television') {
-  //     return List.generate(widget.items.length, (index) => true);
-  //   } else if (itemName == 'Oven') {
-  //     return List.generate(widget.items.length, (index) => true);
-  //   } else if (itemName == 'Microwave') {
-  //     return List.generate(widget.items.length, (index) => true);
-  //   } else if (itemName == 'Washing Machine') {
-  //     return List.generate(widget.items.length, (index) => true);
-  //   }
-  //   // Add more conditions for other itemNames if needed
-
-  //   // Default return if the itemName is not recognized
-  //   return [];
-  // }
-
   String getItemTitle(int index) {
-    // Use the appropriate list based on the itemName
     return widget.items[index]['title'];
   }
 
@@ -74,15 +47,19 @@ class _ListItemWidgetState extends State<ListItemWidget> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          isCircleBlankList[index] = !isCircleBlankList[index];
-          print("isCircleBlankList: $isCircleBlankList");
+          // Clear selection for all items
+          isCircleBlankList =
+              List.generate(widget.items.length, (index) => false);
+
+          // Set the selected item
+          isCircleBlankList[index] = true;
 
           // Use the widget.onSelectionChanged to update the selectedItems
           widget.onSelectionChanged(
             isCircleBlankList
                 .asMap()
                 .entries
-                .where((entry) => !entry.value)
+                .where((entry) => entry.value)
                 .map((entry) => getItemTitle(entry.key))
                 .toList(),
           );
@@ -93,7 +70,7 @@ class _ListItemWidgetState extends State<ListItemWidget> {
           Container(
             padding: EdgeInsets.symmetric(
               horizontal: 20.h,
-              vertical: 15.v, // Adjusted vertical padding
+              vertical: 15.v,
             ),
             decoration: AppDecoration.outlineErrorContainer.copyWith(
               borderRadius: BorderRadiusStyle.roundedBorder10,
@@ -116,17 +93,16 @@ class _ListItemWidgetState extends State<ListItemWidget> {
                           width: 15.adaptSize,
                           decoration: BoxDecoration(
                             color: isCircleBlankList[index]
-                                ? Colors.white
-                                : theme.colorScheme.primary.withOpacity(1),
+                                ? theme.colorScheme.primary.withOpacity(1)
+                                : Colors.white,
                             borderRadius: BorderRadius.circular(9.h),
                           ),
                         ),
                       ),
-                      SizedBox(width: 10.h), // Adjusted spacing
+                      SizedBox(width: 10.h),
                       Expanded(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment
-                              .center, // Center text vertically
+                          mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -144,14 +120,14 @@ class _ListItemWidgetState extends State<ListItemWidget> {
                   ),
                 ),
                 Icon(
-                  Icons.select_all, // Provide a default icon for each item
-                  size: 24, // Adjust the size as needed
-                  color: Colors.black, // Adjust the color as needed
+                  Icons.select_all,
+                  size: 24,
+                  color: Colors.black,
                 ),
               ],
             ),
           ),
-          SizedBox(height: 20.v), // Add spacing between items
+          SizedBox(height: 20.v),
         ],
       ),
     );

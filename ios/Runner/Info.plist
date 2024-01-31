@@ -51,5 +51,9 @@
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>We need your location for...</string>
 
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 </dict>
 </plist>

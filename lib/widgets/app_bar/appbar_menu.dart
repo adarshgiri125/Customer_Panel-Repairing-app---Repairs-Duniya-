@@ -25,67 +25,68 @@ class HalfPage extends StatelessWidget {
             bottom: bottomMargin,
           ),
           decoration: AppDecoration.gradientAmberToErrorContainer,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Rows for the containers
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildClickableContainer(
-                    'assets/images/image 64home.png',
-                    'Home',
-                        () => _navigateToHomeScreen(context),
-                  ),
-                  _buildClickableContainer(
-                    'assets/images/image 63booking.png',
-                    'My Booking',
-                        () => _navigateToBookingScreen(context),
-                  ),
-                  _buildClickableContainer(
-                    'assets/images/reward.png',
-                    'Rewards',
-                        () => _navigateToRewardsScreen(context),
-                  ),
-                ],
-              ),
-              SizedBox(height: 25),
-              Row(
-                children: [
-                  SizedBox(width: 15),
-                  _buildClickableContainer(
-                    'assets/images/image 68buy appliance.png',
-                    'Buy Appliance',
-                        () => _navigateToBuyApplianceScreen(context),
-                  ),
-                  SizedBox(width: 15),
-                  _buildClickableContainer(
-                    'assets/images/image 67help and support.png',
-                    'Help & Support',
-                        () => _navigateToHelpScreen(context),
-                  ),
-                ],
-              ),
-              // Row for the cross button
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: onClose,
-                    icon: Icon(Icons.close, color: Colors.white, size: 40),
-                  ),
-                ],
-              ),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Rows for the containers
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildClickableContainer(
+                      'assets/images/image 64home.png',
+                      'Home',
+                      () => _navigateToHomeScreen(context),
+                    ),
+                    _buildClickableContainer(
+                      'assets/images/image 63booking.png',
+                      'My Booking',
+                      () => _navigateToBookingScreen(context),
+                    ),
+                    _buildClickableContainer(
+                      'assets/images/reward.png',
+                      'Rewards',
+                      () => _navigateToRewardsScreen(context),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 25),
+                Row(
+                  children: [
+                    SizedBox(width: 15),
+                    _buildClickableContainer(
+                      'assets/images/image 68buy appliance.png',
+                      'Buy Appliance',
+                      () => _navigateToBuyApplianceScreen(context),
+                    ),
+                    SizedBox(width: 15),
+                    _buildClickableContainer(
+                      'assets/images/image 67help and support.png',
+                      'Help & Support',
+                      () => _navigateToHelpScreen(context),
+                    ),
+                  ],
+                ),
+                // Row for the cross button
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: onClose,
+                      icon: Icon(Icons.close, color: Colors.white, size: 40),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
-        ),
     );
   }
 
-  Widget _buildClickableContainer(String imagePath, String name, VoidCallback onTap) {
+  Widget _buildClickableContainer(
+      String imagePath, String name, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: _buildContainer(imagePath, name),
@@ -116,10 +117,7 @@ class HalfPage extends StatelessWidget {
   }
 
   void _navigateToHomeScreen(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomePageScreen()),
-    );
+    Navigator.pop(context);
   }
 
   void _navigateToBookingScreen(BuildContext context) {
@@ -187,7 +185,30 @@ class HelpScreen extends StatelessWidget {
         title: Text('Help & Support'),
       ),
       body: Center(
-        child: Text('This is the Help & Support screen'),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'For any assistance or support, please reach out to us:',
+                style: TextStyle(fontSize: 18.0),
+              ),
+              SizedBox(height: 20.0),
+              Text(
+                'Email: repairsduniya@gmail.com',
+                style: TextStyle(fontSize: 16.0),
+              ),
+              SizedBox(height: 10.0),
+              Text(
+                'Phone Number: +91 9550589138',
+                style: TextStyle(fontSize: 16.0),
+              ),
+              // Add more Text widgets as needed
+            ],
+          ),
+        ),
       ),
     );
   }

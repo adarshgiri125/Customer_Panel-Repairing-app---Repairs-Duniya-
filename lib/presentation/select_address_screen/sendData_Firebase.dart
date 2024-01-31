@@ -11,7 +11,7 @@ void storeServiceDetails() async {
 
     // Generate a unique document name
     String documentName = DateTime.now().millisecondsSinceEpoch.toString();
-    
+    DateTime time = DateTime.now();
 
     // Create a reference to the 'customers' collection
     CollectionReference customers =
@@ -19,6 +19,7 @@ void storeServiceDetails() async {
 
     serviceDetails.serviceDocumentName = documentName;
     serviceDetails.user = user;
+    String? phoneNumber = serviceDetails.userPhoneNumber;
 
     // Add a new document with a generated ID
     await customers
@@ -31,9 +32,14 @@ void storeServiceDetails() async {
       'timeIndex': serviceDetails.timeIndex,
       'urgentBooking': serviceDetails.urgentBooking,
       'jobAcceptance': false,
-      // 'userLocation': GeoPoint(serviceDetails.userLocation!.latitude,
-      //     serviceDetails.userLocation!.longitude),
+      'serviceName': serviceDetails.serviceName,
+      'serviceList': serviceDetails.services,
+      'DateTime': time,
+      'userLocation': GeoPoint(serviceDetails.userLocation!.latitude,
+          serviceDetails.userLocation!.longitude),
       'userPhoneNumber': serviceDetails.userPhoneNumber,
+      'userId': userId,
+      'phoneNumber': phoneNumber,
     });
 
     print('Service details stored successfully.');

@@ -23,8 +23,6 @@ Future<void> main() async {
     }
   });
 
-  
-
   ///Please update theme as per your need if required.
   ThemeHelper().changeTheme('primary');
   runApp(MyApp());
@@ -43,6 +41,7 @@ class MyApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             // Return the appropriate screen based on the login status
             return snapshot.data == true ? HomePageScreen() : LogInOneScreen();
+            // return LogInOneScreen();
           } else {
             // Return a loading indicator or splash screen while checking login status
             return CircularProgressIndicator();

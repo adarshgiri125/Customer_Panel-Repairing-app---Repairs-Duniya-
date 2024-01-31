@@ -1,5 +1,5 @@
 import 'package:customer_app/core/utils/image_constant.dart';
-import 'package:customer_app/presentation/repair_service/service_repair_screen.dart';
+import 'package:customer_app/presentation/ServiceDetails/service_repair_screen.dart';
 import 'package:flutter/material.dart';
 
 class DetailsPage extends StatelessWidget {

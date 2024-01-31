@@ -1,10 +1,14 @@
 import 'package:customer_app/core/app_export.dart';
+import 'package:customer_app/presentation/ServiceDetails/service_repair_screen.dart';
+import 'package:customer_app/presentation/home_page_screen/widgets/homepagestaggered_item_widget.dart';
+import 'package:customer_app/presentation/item_list/list.dart';
 import 'package:customer_app/widgets/app_bar/appbar_leading_image.dart';
 import 'package:customer_app/widgets/app_bar/appbar_title.dart';
 import 'package:customer_app/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:customer_app/widgets/app_bar/custom_app_bar.dart';
 import 'package:customer_app/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class BookingConfirmationScreen extends StatelessWidget {
   const BookingConfirmationScreen({Key? key})
@@ -38,7 +42,7 @@ class BookingConfirmationScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 30.v),
-              _buildSpaRow(context),
+              _buildPage(context),
               Spacer(),
               SizedBox(height: 27.v),
               CustomElevatedButton(
@@ -94,8 +98,8 @@ class BookingConfirmationScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            "Your Booking is Confirmed!",
-            style: CustomTextStyles.titleLargeGray700,
+            "We Have accepted Your Request, Thank You for Booking",
+            style: CustomTextStyles.bodyLargeInterBluegray500,
           ),
           SizedBox(height: 21.v),
           CustomImageView(
@@ -104,29 +108,11 @@ class BookingConfirmationScreen extends StatelessWidget {
             width: 103.h,
           ),
           SizedBox(height: 25.v),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "Booking ID:",
-                  style: CustomTextStyles.bodyLargeOpenSansGray700,
-                ),
-                TextSpan(
-                  text: " ",
-                ),
-                TextSpan(
-                  text: "BL00967",
-                  style: CustomTextStyles.titleMediumBlack900,
-                ),
-              ],
-            ),
-            textAlign: TextAlign.left,
-          ),
           SizedBox(height: 22.v),
           SizedBox(
             width: 249.h,
             child: Text(
-              "An assigned technician will reach your address in 1 hour",
+              "You will get a technician Number shortly and will reach on time",
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
@@ -140,142 +126,43 @@ class BookingConfirmationScreen extends StatelessWidget {
   }
 
   /// Section Widget
-  Widget _buildSpaRow(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(right: 8.h),
-            child: Column(
-              children: [
-                Container(
-                  height: 83.adaptSize,
-                  width: 83.adaptSize,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 6.h,
-                    vertical: 16.v,
-                  ),
-                  decoration: AppDecoration.outlinePrimary.copyWith(
-                    borderRadius: BorderRadiusStyle.roundedBorder7,
-                  ),
-                  child: CustomImageView(
-                    imagePath: ImageConstant.imgImage41,
-                    height: 48.v,
-                    width: 69.h,
-                    alignment: Alignment.center,
-                  ),
+}
+
+Widget _buildPage(BuildContext context) {
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 24), // Adjusted padding
+    child: StaggeredGridView.countBuilder(
+      shrinkWrap: true,
+      primary: false,
+      crossAxisCount: 8,
+      crossAxisSpacing: 16,
+      mainAxisSpacing: 30,
+      staggeredTileBuilder: (index) {
+        return StaggeredTile.fit(2);
+      },
+      itemCount: confirmationitems.length,
+      itemBuilder: (context, index) {
+        Map<String, dynamic> currentItem = confirmationitems[index];
+
+        return GestureDetector(
+          onTap: () {
+            // Navigate to the AcServiceRepairScreen and pass the data
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AcServiceRepairScreen(
+                  imagePath: currentItem["imagePath"],
+                  itemName: currentItem["itemName"],
                 ),
-                SizedBox(height: 1.v),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 27.h),
-                    child: Text(
-                      "Spa",
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            );
+          },
+          child: HomepagestaggeredItemWidget(
+            imagePath: currentItem["imagePath"],
+            itemName: currentItem["itemName"],
           ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.h),
-            child: Column(
-              children: [
-                Container(
-                  height: 83.adaptSize,
-                  width: 83.adaptSize,
-                  padding: EdgeInsets.all(2.h),
-                  decoration: AppDecoration.outlinePrimary.copyWith(
-                    borderRadius: BorderRadiusStyle.roundedBorder7,
-                  ),
-                  child: CustomImageView(
-                    imagePath: ImageConstant.imgImage40,
-                    height: 76.adaptSize,
-                    width: 76.adaptSize,
-                    alignment: Alignment.center,
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 18.h),
-                    child: Text(
-                      "Salon",
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.h),
-            child: Column(
-              children: [
-                Container(
-                  height: 83.adaptSize,
-                  width: 83.adaptSize,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 1.h,
-                    vertical: 15.v,
-                  ),
-                  decoration: AppDecoration.outlinePrimary.copyWith(
-                    borderRadius: BorderRadiusStyle.roundedBorder7,
-                  ),
-                  child: CustomImageView(
-                    imagePath: ImageConstant.imgImage62,
-                    height: 50.v,
-                    width: 80.h,
-                    alignment: Alignment.center,
-                  ),
-                ),
-                SizedBox(height: 1.v),
-                Text(
-                  "Painting",
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ],
-            ),
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(left: 8.h),
-            child: Column(
-              children: [
-                Container(
-                  height: 83.adaptSize,
-                  width: 83.adaptSize,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 21.h,
-                    vertical: 37.v,
-                  ),
-                  decoration: AppDecoration.outlinePrimary.copyWith(
-                    borderRadius: BorderRadiusStyle.roundedBorder7,
-                  ),
-                  child: CustomImageView(
-                    imagePath: ImageConstant.imgFrame5140235,
-                    height: 6.v,
-                    width: 39.h,
-                    alignment: Alignment.center,
-                  ),
-                ),
-                Text(
-                  "More",
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+        );
+      },
+    ),
+  );
 }

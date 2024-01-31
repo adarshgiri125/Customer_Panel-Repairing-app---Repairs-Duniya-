@@ -27,6 +27,7 @@ class _OtpOneScreenState extends State<OtpOneScreen> {
   bool flag = false;
   String otp = '';
   String? deviceToken = '';
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -129,20 +130,24 @@ class _OtpOneScreenState extends State<OtpOneScreen> {
                   ),
                 ),
                 SizedBox(height: 24.v),
-                CustomElevatedButton(
-                  //  dynamicBackgroundColor: buttonColor,
-                  text: "Verify",
-                  buttonStyle: flag == true
-                      ? const ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.black))
-                      : const ButtonStyle(),
-                  onPressed: otpController.text.length == 6
-                      ? () {
-                          _verifyOtp(context, otpController.text);
-                        }
-                      : null,
-                ),
+                isLoading
+                    ? CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                      ) // Show circular progress bar when loading
+                    : CustomElevatedButton(
+                        text: "Verify",
+                        buttonStyle: flag == true
+                            ? ButtonStyle(
+                                backgroundColor:
+                                    MaterialStatePropertyAll(Colors.black),
+                              )
+                            : ButtonStyle(),
+                        onPressed: otpController.text.length == 6 && !isLoading
+                            ? () {
+                                _verifyOtp(context, otpController.text);
+                              }
+                            : null,
+                      ),
                 SizedBox(height: 33.v),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -196,6 +201,9 @@ class _OtpOneScreenState extends State<OtpOneScreen> {
   }
 
   void _verifyOtp(BuildContext context, String enteredOtp) async {
+    setState(() {
+      isLoading = true; // Set loading to true when OTP verification starts
+    });
     try {
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: widget.verificationId,
@@ -232,6 +240,11 @@ class _OtpOneScreenState extends State<OtpOneScreen> {
         content: Text('Incorrect OTP'),
       ));
       // You can show an error message to the user if needed
+    } finally {
+      setState(() {
+        isLoading =
+            false; // Set loading to false when OTP verification is complete
+      });
     }
   }
 

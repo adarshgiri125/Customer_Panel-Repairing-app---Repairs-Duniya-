@@ -30,6 +30,15 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
   String address = "";
   bool showAdditionalContent = false;
 
+  final List<String> codes = [
+    '516001',
+    '516002',
+    '516003',
+    '516004',
+    '560076',
+    '560102',
+  ];
+
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
@@ -279,7 +288,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
             controller: TextEditingController(text: address),
           ),
           SizedBox(
-            height: 400.v,
+            height: 300.v,
             width: double.maxFinite,
             child: Stack(
               alignment: Alignment.bottomCenter,
@@ -525,49 +534,135 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
     bool isTimeSelected = selectedTimeIndex != -1;
     bool isReasonSelected = isChecked;
 
-    bool isButtonEnabled =
-        // isLocationSelected &&
+    bool isButtonEnabled = isLocationSelected &&
         ((isChecked && isReasonSelected) ||
             (!isChecked && isDateSelected && isTimeSelected));
 
-    return CustomElevatedButton(
-      text: isButtonEnabled
-          ? "Confirm Booking"
-          : "Please fill all required fields",
-      margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 34.v),
-      buttonStyle: isButtonEnabled
-          ? const ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.black))
-          : const ButtonStyle(),
-      onPressed: isButtonEnabled
-          ? () {
-              serviceDetails.address = address;
-              serviceDetails.serviceDate = selectedDate;
-              serviceDetails.timeIndex = selectedTimeIndex;
-              serviceDetails.userLocation = serviceDetails.userLocation;
-              serviceDetails.userPhoneNumber = serviceDetails.userPhoneNumber;
-              serviceDetails.urgentBooking = isChecked;
+    bool isLoading = false;
 
-              deleteOldServiceDetails();
-              storeServiceDetails();
+    return Stack(
+      children: [
+        CustomElevatedButton(
+          text: isButtonEnabled
+              ? "Confirm Booking"
+              : "Please fill all required fields",
+          margin: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 34.v),
+          buttonStyle: isButtonEnabled
+              ? const ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll(Colors.black))
+              : const ButtonStyle(),
+          onPressed: isButtonEnabled
+              ? () async {
+                  setState(() {
+                    isLoading = true;
+                  });
 
-              // sendNotificationsToNearbyTechnicians(
-              //     serviceName!,
-              //     serviceDetails.userLocation!.latitude,
-              //     serviceDetails.userLocation!.longitude);
-              sendNotificationsToNearbyTechnicians(
-                  serviceName!, 12.9716, 77.5946);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => BookingConfirmationScreen()),
-              );
-            }
-          : null,
+                  serviceDetails.address = address;
+                  serviceDetails.serviceDate = selectedDate;
+                  serviceDetails.timeIndex = selectedTimeIndex;
+                  serviceDetails.userLocation = serviceDetails.userLocation;
+                  serviceDetails.userPhoneNumber =
+                      serviceDetails.userPhoneNumber;
+                  serviceDetails.urgentBooking = isChecked;
+
+                  // Check if the selected address belongs to the specified pincodes
+                  bool isServiceable = await checkServiceability(address);
+                  if (isServiceable) {
+                    deleteOldServiceDetails();
+                    storeServiceDetails();
+
+                    sendNotificationsToNearbyTechnicians(
+                        serviceName!,
+                        serviceDetails.userLocation!.latitude,
+                        serviceDetails.userLocation!.longitude);
+                    // sendNotificationsToNearbyTechnicians(
+                    //     serviceName!, 12.9716, 77.5946);
+
+                    // await Future.delayed(Duration(seconds: 5));
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BookingConfirmationScreen(),
+                      ),
+                    );
+                  } else {
+                    // Address is not serviceable, show a message to the user
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("Not Serviceable"),
+                          content:
+                              Text("We are not serviceable at this location."),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor:
+                                    Colors.black, // Set the background color
+                              ),
+                              child: Text(
+                                "OK",
+                                style: TextStyle(
+                                  color: Colors.white, // Set the text color
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                  setState(() {
+                    isLoading = false;
+                  });
+                }
+              : null,
+        ),
+        if (isLoading)
+          Positioned.fill(
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
   onTapImage(BuildContext context) {
     Navigator.pop(context);
+  }
+
+  Future<bool> checkServiceability(String address) async {
+    // Extract pincode from the address
+    String pincode = await getPincodeFromAddress(address);
+
+    // Check if the pincode is in the list of serviceable codes
+    return codes.contains(pincode);
+  }
+
+  Future<String> getPincodeFromAddress(String address) async {
+    try {
+      List<Location> locations = await locationFromAddress(address);
+
+      if (locations.isNotEmpty) {
+        Location location = locations[0];
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          location.latitude,
+          location.longitude,
+        );
+
+        if (placemarks.isNotEmpty) {
+          return placemarks[0].postalCode ?? "";
+        }
+      }
+    } catch (e) {
+      print("Error getting pincode: $e");
+    }
+    return "";
   }
 }
