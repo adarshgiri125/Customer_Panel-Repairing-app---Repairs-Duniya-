@@ -288,7 +288,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
             controller: TextEditingController(text: address),
           ),
           SizedBox(
-            height: 300.v,
+            height: 325.v,
             width: double.maxFinite,
             child: Stack(
               alignment: Alignment.bottomCenter,
@@ -304,11 +304,18 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                     _updateCameraPosition(controller);
                   },
                   markers: _createMarkers(),
-                  onCameraMove: (CameraPosition position) {},
+                  onCameraMove: (CameraPosition position) {
+                    setState(() {
+                      _initialCameraPosition = position.target;
+                    });
+                  },
                   onCameraIdle: () async {
                     final GoogleMapController controller =
                         await _mapController.future;
                     _updateCameraPosition(controller);
+                  },
+                  onTap: (LatLng tappedPoint) {
+                    _updateMarkerPosition(tappedPoint);
                   },
                 ),
                 Align(
@@ -333,8 +340,6 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
   }
 
   Future<void> _updateCameraPosition(GoogleMapController controller) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-
     LatLngBounds visibleRegion = await controller.getVisibleRegion();
     LatLng center = LatLng(
       (visibleRegion.southwest.latitude + visibleRegion.northeast.latitude) / 2,
@@ -455,6 +460,22 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
       initialDate: currentDate,
       firstDate: currentDate,
       lastDate: lastSelectableDate,
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Colors.black, // OK button text color
+            hintColor: Color.fromARGB(255, 4, 169, 228), // Selection color
+            colorScheme: ColorScheme.light(primary: Colors.black),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+      // textButtonStyle: TextButton.styleFrom(
+      //   primary: Colors.black, // CANCEL button text color
+      // ),
     );
 
     if (pickedDate != null) {

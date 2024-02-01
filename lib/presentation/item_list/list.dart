@@ -25,11 +25,14 @@ List<Map<String, dynamic>> otheritems = [
   },
 ];
 
-List<Map<String, dynamic>> confirmationitems = [
-  {"imagePath": ImageConstant.imgImage41, "itemName": "Spa"},
-  {"imagePath": ImageConstant.imgImage40, "itemName": "Saloon"},
+List<Map<String, dynamic>> confirmation = [
   {"imagePath": ImageConstant.painter, "itemName": "Painter"},
-  {"imagePath": ImageConstant.imgImage32, "itemName": "More"},
+  {"imagePath": ImageConstant.electrician, "itemName": "Electrician"},
+  {"imagePath": ImageConstant.plumber, "itemName": "Plumber"},
+  {
+    "imagePath": ImageConstant.construction,
+    "itemName": "Construction/Renovation"
+  },
 ];
 
 List<dynamic> Saloon = [

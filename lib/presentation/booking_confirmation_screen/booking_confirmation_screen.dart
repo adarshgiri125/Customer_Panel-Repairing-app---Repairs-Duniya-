@@ -1,5 +1,6 @@
 import 'package:customer_app/core/app_export.dart';
 import 'package:customer_app/presentation/ServiceDetails/service_repair_screen.dart';
+import 'package:customer_app/presentation/home_page_screen/home_page_screen.dart';
 import 'package:customer_app/presentation/home_page_screen/widgets/homepagestaggered_item_widget.dart';
 import 'package:customer_app/presentation/item_list/list.dart';
 import 'package:customer_app/widgets/app_bar/appbar_leading_image.dart';
@@ -50,6 +51,16 @@ class BookingConfirmationScreen extends StatelessWidget {
                 buttonStyle: CustomButtonStyles.none,
                 decoration: CustomButtonStyles
                     .gradientPrimaryToOnErrorContainerDecoration,
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomePageScreen(),
+                    ),
+                    (Route<dynamic> route) =>
+                        false, // Removes all routes from the stack
+                  );
+                },
               ),
             ],
           ),
@@ -98,8 +109,9 @@ class BookingConfirmationScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            "We Have accepted Your Request, Thank You for Booking",
-            style: CustomTextStyles.bodyLargeInterBluegray500,
+            "We Have accepted Your Request, Thankyou for your Booking",
+            textAlign: TextAlign.center,
+            style: CustomTextStyles.titleMediumBlack900,
           ),
           SizedBox(height: 21.v),
           CustomImageView(
@@ -112,10 +124,10 @@ class BookingConfirmationScreen extends StatelessWidget {
           SizedBox(
             width: 249.h,
             child: Text(
-              "You will get a technician Number shortly and will reach on time",
+              "Our expert will get in touch with you soon",
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.left,
               style: CustomTextStyles.bodyLargeGray700,
             ),
           ),
@@ -140,9 +152,9 @@ Widget _buildPage(BuildContext context) {
       staggeredTileBuilder: (index) {
         return StaggeredTile.fit(2);
       },
-      itemCount: confirmationitems.length,
+      itemCount: confirmation.length,
       itemBuilder: (context, index) {
-        Map<String, dynamic> currentItem = confirmationitems[index];
+        Map<String, dynamic> currentItem = confirmation[index];
 
         return GestureDetector(
           onTap: () {

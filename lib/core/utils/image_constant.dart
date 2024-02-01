@@ -87,13 +87,10 @@ class ImageConstant {
 
   static String imgImage42 = '$imagePath/img_image_42.png';
 
-  static String electrician = '$imagePath/electrician.png';
+  static String electrician = '$imagePath/electrician.jpeg';
 
-  static String plumber = '$imagePath/plumber.png';
-  
+  static String plumber = '$imagePath/plumber.jpeg';
 
-  static String painter = '$imagePath/painter.png';
+  static String painter = '$imagePath/painter.jpeg';
   static String construction = '$imagePath/construction.png';
-
-
 }

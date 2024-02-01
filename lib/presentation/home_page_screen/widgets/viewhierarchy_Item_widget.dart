@@ -46,17 +46,17 @@ class _ViewhierarchyItemWidgetState extends State<ViewhierarchyItemWidget> {
                 },
                 children: [
                   CustomImageView(
-                    imagePath: ImageConstant.imgImage40,
+                    imagePath: ImageConstant.imgFrame5140235,
                     height: 159,
                     width: 378,
                   ),
                   CustomImageView(
-                    imagePath: ImageConstant.imgImage38,
+                    imagePath: ImageConstant.imgFrame5140245,
                     height: 159,
                     width: 378,
                   ),
                   CustomImageView(
-                    imagePath: ImageConstant.imgImage39,
+                    imagePath: ImageConstant.imgFrame5140267,
                     height: 159,
                     width: 378,
                   ),

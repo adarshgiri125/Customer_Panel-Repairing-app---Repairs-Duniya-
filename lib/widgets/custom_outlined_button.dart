@@ -51,18 +51,20 @@ class CustomOutlinedButton extends BaseButton {
         : buildOutlinedButtonWidget;
   }
 
+  @override
   Widget get buildOutlinedButtonWidget => Container(
         height: this.height ?? 40.v,
         width: this.width ?? double.maxFinite,
         margin: margin,
-        decoration: decoration,
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: OutlinedButton(
-            style: buttonStyle?.merge(
-              OutlinedButton.styleFrom(
-                  // Add any other style properties as needed
-                  ),
+            style: ButtonStyle(
+              side: MaterialStateProperty.all(
+                  BorderSide(color: Colors.black)), // Set border color
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              )),
             ),
             onPressed: isDisabled ?? false ? null : onPressed ?? () {},
             child: Row(

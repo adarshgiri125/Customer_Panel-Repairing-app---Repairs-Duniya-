@@ -157,7 +157,7 @@ class RewardsScreen extends StatelessWidget {
         title: Text('Rewards'),
       ),
       body: Center(
-        child: Text('This is the Rewards screen'),
+        child: Text('This service is not Available right now'),
       ),
     );
   }
@@ -171,7 +171,7 @@ class BuyApplianceScreen extends StatelessWidget {
         title: Text('Buy Appliance'),
       ),
       body: Center(
-        child: Text('This is the Buy Appliance screen'),
+        child: Text('This service is not Available right now'),
       ),
     );
   }
@@ -186,14 +186,14 @@ class HelpScreen extends StatelessWidget {
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(15.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'For any assistance or support, please reach out to us:',
-                style: TextStyle(fontSize: 18.0),
+                "For any assistance or support, please reach out to us:",
+                style: TextStyle(fontSize: 20.0),
               ),
               SizedBox(height: 20.0),
               Text(

@@ -44,7 +44,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
   bool isLocationFetched = false;
 
   String userInput = "";
-  
 
   @override
   void initState() {
@@ -144,8 +143,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   ),
                   SizedBox(height: 11),
                   _buildHomePageStack1(context),
-                  SizedBox(height: 30),
-                  ViewhierarchyItemWidget(),
+                  // SizedBox(height: 30),
+                  // ViewhierarchyItemWidget(),
                   SizedBox(height: 25),
                 ],
               ),
@@ -399,7 +398,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
           return GestureDetector(
             onTap: () {
-              
               // Navigate to the AcServiceRepairScreen and pass the data
               Navigator.push(
                 context,
@@ -407,7 +405,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   builder: (context) => AcServiceRepairScreen(
                     imagePath: currentItem["imagePath"],
                     itemName: currentItem["itemName"],
-                    
                   ),
                 ),
               );
