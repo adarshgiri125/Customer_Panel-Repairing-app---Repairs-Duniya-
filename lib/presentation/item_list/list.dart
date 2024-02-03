@@ -4,8 +4,8 @@ List<Map<String, dynamic>> items = [
   {"imagePath": ImageConstant.imgImage38, "itemName": "AC"},
   {"imagePath": ImageConstant.imgImage34, "itemName": "Fridge"},
   {"imagePath": ImageConstant.imgImage31, "itemName": "Washing Machine"},
-  {"imagePath": ImageConstant.imgImage32, "itemName": "Geyser"},
-  {"imagePath": ImageConstant.imgImage32, "itemName": "Air Cooler"},
+  {"imagePath": ImageConstant.Geyser, "itemName": "Geyser"},
+  {"imagePath": ImageConstant.Aircooler, "itemName": "Air Cooler"},
   {"imagePath": ImageConstant.imgImage36, "itemName": "Ceiling Fan"},
 
   // {"imagePath": ImageConstant.imgImage33, "itemName": "Television"},

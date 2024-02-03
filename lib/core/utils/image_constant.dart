@@ -30,7 +30,8 @@ class ImageConstant {
 
   static String imgImage31 = '$imagePath/img_image_31.png';
 
-  static String imgImage32 = '$imagePath/img_image_32.png';
+  static String Geyser = '$imagePath/Geyser.jpeg';
+  static String Aircooler = '$imagePath/AirCooler.jpeg';
 
   static String imgImage33 = '$imagePath/img_image_33.png';
 
