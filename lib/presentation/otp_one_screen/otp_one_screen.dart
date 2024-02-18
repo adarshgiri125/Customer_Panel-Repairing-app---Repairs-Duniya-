@@ -1,5 +1,6 @@
 import 'package:customer_app/core/app_export.dart';
 import 'package:customer_app/presentation/home_page_screen/home_page_screen.dart';
+import 'package:customer_app/presentation/log_in_two_screen/log_in_two_screen.dart';
 import 'package:customer_app/widgets/custom_elevated_button.dart';
 import 'package:customer_app/widgets/custom_pin_code_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -181,12 +182,23 @@ class _OtpOneScreenState extends State<OtpOneScreen> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(
-                        left: 8.h,
-                        top: 2.v,
+                        left: 8.0,
+                        top: 2.0,
                       ),
-                      child: Text(
-                        "Back to log in",
-                        style: CustomTextStyles.titleSmallBluegray700,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LogInOneScreen()),
+                            (route) =>
+                                false, // Removes all routes from the stack
+                          );
+                        },
+                        child: Text(
+                          "Back to log in",
+                          style: CustomTextStyles.titleMediumBlack900,
+                        ),
                       ),
                     ),
                   ],
@@ -285,7 +297,7 @@ class _OtpOneScreenState extends State<OtpOneScreen> {
         },
         codeSent: (String verificationId, int? resendToken) {
           // Navigate to OTP screen with verificationId
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => OtpOneScreen(
