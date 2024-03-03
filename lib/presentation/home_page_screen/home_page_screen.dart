@@ -34,6 +34,7 @@ class HomePageScreen extends StatefulWidget {
 class _HomePageScreenState extends State<HomePageScreen> {
   TextEditingController locationController = TextEditingController();
   TextEditingController searchController = TextEditingController();
+
   late bool showHalfPage;
 
   late bool showLocation;

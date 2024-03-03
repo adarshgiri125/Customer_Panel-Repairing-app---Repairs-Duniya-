@@ -29,12 +29,28 @@ class _OtpOneScreenState extends State<OtpOneScreen> {
   String otp = '';
   String? deviceToken = '';
   bool isLoading = false;
+  FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     super.initState();
     setupDeviceToken();
+    // auth.authStateChanges().listen((User? user) {
+    //   if (user != null) {
+    //     // saveLoginInfo(user as String);
+    //     _addUserToFirestore();
+    //     navigateToHomeScreen();
+    //   }
+    // });
   }
+
+  // void navigateToHomeScreen() {
+  //   Navigator.pushAndRemoveUntil(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => HomePageScreen()),
+  //     (route) => false,
+  //   );
+  // }
 
   Future<void> setupDeviceToken() async {
     try {

@@ -71,7 +71,7 @@ class PushNotificationSystem {
             .collection('notifications')
             .add({
           'message':
-              'Your service has been accepted, and we have assigned an expert to you - His number - $phoneNumber',
+              'Your service has been accepted, and we have assigned an expert to you.',
           'timestamp': FieldValue.serverTimestamp(),
         });
       } else {

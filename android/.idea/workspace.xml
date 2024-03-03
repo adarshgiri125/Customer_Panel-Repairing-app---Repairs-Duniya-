@@ -4,13 +4,22 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="888e0ca2-08ea-486c-ba46-8977dc047563" name="Changes" comment="">
+    <list default="true" id="0a535ed1-312c-4685-95de-3bb3eea69370" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../PlayStoreData/Untitled" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../PlayStoreData/private_key.pepk" beforeDir="false" afterPath="$PROJECT_DIR$/../PlayStoreData/private_key.pepk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/kotlinc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/kotlinc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/release/app-release.aab" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/app-release.aab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Backened Part/Notification.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/Backened Part/Notification.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Backened Part/getNotification.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/Backened Part/getNotification.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Backened Part/sendNotification.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/Backened Part/sendNotification.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/home_page_screen/home_page_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/home_page_screen/home_page_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/location/getCurrentLocation.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/log_in_two_screen/log_in_two_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/log_in_two_screen/log_in_two_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/otp_one_screen/otp_one_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/otp_one_screen/otp_one_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/select_address_screen/select_address_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/select_address_screen/select_address_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/user profile/profile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/user profile/profile.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -18,7 +27,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[/Users/adarshgiri/.android/avd/Pixel_5_API_29.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[adb-VWNJBIGUMBGABU6X-wsnIRq._adb-tls-connect._tcp.]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -26,35 +35,35 @@
   </component>
   <component name="GenerateSignedApkSettings">
     <option name="EXPORT_PRIVATE_KEY" value="false" />
-    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/../PlayStoreData/Untitled" />
+    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/../PlayStoreData/Untitled copy" />
     <option name="KEY_ALIAS" value="key0" />
     <option name="REMEMBER_PASSWORDS" value="true" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectId" id="2btDhMOt764PcIZlwr1TbdLDHO5" />
+  <component name="ProjectId" id="2dAfqHEsWTqQ00jraoxgAwkyPrW" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;BundleExportedModule&quot;: &quot;android.app&quot;,
-    &quot;ExportBundle.BundlePathForandroid.app&quot;: &quot;/Users/adarshgiri/flutteradarsh/customer_app-v1.0.1/android/app&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "BundleExportedModule": "android.app",
+    "ExportBundle.BundlePathForandroid.app": "/Users/adarshgiri/flutteradarsh/customer_app-v1.0.1/android/app",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "show.migrate.to.gradle.popup": "false"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;ExportApk.BuildVariants&quot;: [
-      &quot;release&quot;
+  "keyToStringList": {
+    "ExportApk.BuildVariants": [
+      "release"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="android.app.main" />
@@ -126,11 +135,11 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="888e0ca2-08ea-486c-ba46-8977dc047563" name="Changes" comment="" />
-      <created>1707025599671</created>
+      <changelist id="0a535ed1-312c-4685-95de-3bb3eea69370" name="Changes" comment="" />
+      <created>1709455992795</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1707025599671</updated>
+      <updated>1709455992795</updated>
     </task>
     <servers />
   </component>

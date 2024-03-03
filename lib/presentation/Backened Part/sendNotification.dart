@@ -28,6 +28,18 @@ Future<void> sendNotificationsToNearbyTechnicians(
     customerLongitude,
   );
 
+  /// admin section----->>>>>
+  List<String> adminDeviceTokens = await getAdminDeviceTokens();
+  //send notification to admin
+  for (var adminToken in adminDeviceTokens) {
+    print("Sending notification to admin...");
+    notificationFormat("admin", address, phoneNumber, adminToken);
+
+    print("Waiting for admin response...");
+    // Your existing code to handle admin's response...
+  }
+  ////<<<<<------
+
   print("Number of nearby technicians: ${nearbyTechnicians.length}");
   // Print the sorted list of technicians
   for (var technician in nearbyTechnicians) {
@@ -120,6 +132,7 @@ notificationFormat(receiverID, address, phoneNumber, userDeviceToken) async {
     "notification": bodyNotification,
     "data": dataMap,
     "priority": "high",
+    // "sound": "notification.mp3",
     "to": userDeviceToken,
   };
 
@@ -188,27 +201,31 @@ Future<List<DocumentSnapshot>> getNearbyTechnicians(
   );
 
   // Calculate distances asynchronously
-  List<double> distances =
-      await Future.wait(technicians.map((technician) async {
-    Map<String, dynamic> location =
-        locationsData.firstWhere((element) => element['id'] == technician.id);
+  List<Map<String, dynamic>> techniciansWithDistances = [];
 
-    return await calculateDistance(
+  for (int index = 0; index < technicians.length; index++) {
+    Map<String, dynamic> location = locationsData
+        .firstWhere((element) => element['id'] == technicians[index].id);
+
+    double distance = await calculateDistance(
       customerLatitude,
       customerLongitude,
       location['latitude'],
       location['longitude'],
     );
-  }));
 
-  // Combine technicians with their corresponding distances
-  List<Map<String, dynamic>> techniciansWithDistances =
-      List.generate(technicians.length, (index) {
-    return {
-      'technician': technicians[index],
-      'distance': distances[index],
-    };
-  });
+    if (distance <= 13.0) {
+      techniciansWithDistances.add({
+        'technician': technicians[index],
+        'distance': distance,
+      });
+      print(
+          "Technician ${technicians[index].id} is close (distance: $distance km). including from the list.");
+    } else {
+      print(
+          "Technician ${technicians[index].id} is too far away (distance: $distance km). Excluding from the list.");
+    }
+  }
 
   // Sort technicians based on distance
   techniciansWithDistances.sort((a, b) {
@@ -262,5 +279,28 @@ Future<double> calculateDistance(
   } else {
     print('Error: ${response.statusCode}');
     throw Exception('Failed to get directions');
+  }
+}
+
+Future<List<String>> getAdminDeviceTokens() async {
+  try {
+    // Fetch all admin documents from Firestore
+    QuerySnapshot adminSnapshot =
+        await FirebaseFirestore.instance.collection("admins").get();
+
+    if (adminSnapshot.docs.isNotEmpty) {
+      // Extract device tokens from all admin documents
+      List<String> adminTokens = adminSnapshot.docs
+          .where((doc) => doc['token'] != null)
+          .map((doc) => doc['token'].toString())
+          .toList();
+      return adminTokens;
+    } else {
+      print("No admin documents found.");
+      return [];
+    }
+  } catch (e) {
+    print("Error fetching admin device tokens: $e");
+    return [];
   }
 }

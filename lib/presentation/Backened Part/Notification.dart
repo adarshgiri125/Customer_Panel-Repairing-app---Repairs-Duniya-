@@ -7,7 +7,6 @@ class NotificationPage extends StatelessWidget {
   User? _user;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   NotificationPage({required this.notifications});
 
   @override

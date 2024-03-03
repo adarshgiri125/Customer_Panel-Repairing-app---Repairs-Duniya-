@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
 
 class SelectAddressScreen extends StatefulWidget {
@@ -206,11 +207,56 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
         color: Colors.black,
       ),
       onPressed: () async {
-        // final GoogleMapController controller = await _mapController.future;
-        // controller.animateCamera(CameraUpdate.newLatLng(
-        //   AppState.currentLocation ?? LatLng(12.9716, 77.5946),
-        // ));
-        await _getCurrentLocation();
+        // Check if the user has granted location permission
+        var status = await Permission.location.status;
+
+        if (status == PermissionStatus.granted) {
+          // User has granted location permission, proceed to get the current location
+          await _getCurrentLocation();
+        } else if (status == PermissionStatus.denied) {
+          // Location permission is denied, show a dialog with an option to open app settings
+          showLocationPermissionDialog(context);
+        } else {
+          // User has not yet been asked for permission, request it
+          await Permission.location.request();
+        }
+      },
+    );
+  }
+
+  void showLocationPermissionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Location Permission"),
+          content: Text("Turn on the location permission"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                openAppSettings(); // Open app settings
+                Navigator.pop(context); // Close the dialog
+              },
+              child: Text(
+                "Open Settings",
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ],
+        );
       },
     );
   }

@@ -20,6 +20,7 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
   String phoneNumber = '';
   bool flag = false;
   bool isLoading = false;
+  FocusNode _focusNode = FocusNode();
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -88,8 +89,8 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
                   SizedBox(height: 7.v),
                   CustomTextFormField(
                     onChanged: (value) {
-                      phoneNumber = value;
                       setState(() {
+                        phoneNumber = value;
                         if (phoneNumber.length == 10) {
                           flag = true;
                         } else {
@@ -98,6 +99,7 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
                       });
                     },
                     controller: phoneNumberController,
+                    focusNode: _focusNode,
                     hintText: "Enter your phone number",
                     textInputAction: TextInputAction.done,
                     textInputType: TextInputType.phone,
@@ -131,28 +133,6 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
     );
   }
 
-  // Widget _buildRememberForDays(BuildContext context) {
-  //   return Align(
-  //     alignment: Alignment.centerLeft,
-  //     child: Padding(
-  //       padding: EdgeInsets.only(left: 3.h),
-  //       child: CustomCheckboxButton(
-  //         alignment: Alignment.centerLeft,
-  //         text: "Remember for 30 days",
-  //         value: rememberForDays,
-  //         padding: EdgeInsets.symmetric(vertical: 1.v),
-  //         onChange: (value) {
-  //           setState(() {
-  //             rememberForDays = value;
-  //           });
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // verification of phone number (Authentication)
-
   void _verifyPhoneNumber() async {
     setState(() {
       isLoading = true; // Set isLoading to true when the button is pressed
@@ -176,7 +156,7 @@ class _LogInOneScreenState extends State<LogInOneScreen> {
       phoneNumber: phoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) async {
         // Auto-retrieve the SMS code on Android
-        await FirebaseAuth.instance.signInWithCredential(credential);
+        // await FirebaseAuth.instance.signInWithCredential(credential);
       },
       verificationFailed: (FirebaseAuthException e) {
         // Handle verification failed
