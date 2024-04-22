@@ -99,7 +99,7 @@ class _ListItemWidgetState extends State<ListItemWidget> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 10.h),
+                      SizedBox(width: 20.h),
                       Expanded(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -119,11 +119,11 @@ class _ListItemWidgetState extends State<ListItemWidget> {
                     ],
                   ),
                 ),
-                Icon(
-                  Icons.select_all,
-                  size: 24,
-                  color: Colors.black,
-                ),
+                // Icon(
+                //   Icons.select_all,
+                //   size: 24,
+                //   color: Colors.black,
+                // ),
               ],
             ),
           ),

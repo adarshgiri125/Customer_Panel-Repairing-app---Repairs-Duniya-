@@ -1,6 +1,6 @@
 name: customer_app
 description: A new Flutter project.
-version: 6.0.6+6
+version: 11.0.0+11
 environment: 
   sdk: '>=2.12.0 <3.0.0'
 dependencies: 
@@ -29,6 +29,7 @@ dependencies:
   google_maps_webservice: ^0.0.20-nullsafety.5
   flutter_launcher_icons: ^0.13.1
   recaptcha_enterprise_flutter: ^18.4.0
+  flutter_local_notifications: ^16.3.3
 
 
 flutter_launcher_icons:

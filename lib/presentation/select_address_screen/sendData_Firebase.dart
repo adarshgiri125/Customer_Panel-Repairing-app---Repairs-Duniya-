@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app%20state/serviceDetails.dart';
 import 'package:firebase_phone_auth_handler/firebase_phone_auth_handler.dart';
 
-void storeServiceDetails() async {
+Future<void> storeServiceDetails(String documentName, DateTime time) async {
   FirebaseAuth auth = FirebaseAuth.instance;
   User? user = auth.currentUser;
 
@@ -10,8 +10,8 @@ void storeServiceDetails() async {
     String userId = user.uid;
 
     // Generate a unique document name
-    String documentName = DateTime.now().millisecondsSinceEpoch.toString();
-    DateTime time = DateTime.now();
+    // String documentName = DateTime.now().millisecondsSinceEpoch.toString();
+    // DateTime time = DateTime.now();
 
     // Create a reference to the 'customers' collection
     CollectionReference customers =
@@ -40,6 +40,9 @@ void storeServiceDetails() async {
       'userPhoneNumber': serviceDetails.userPhoneNumber,
       'userId': userId,
       'phoneNumber': phoneNumber,
+      'userCity': serviceDetails.city,
+      'technicianAvailable': "0",
+      'workStatus' : "not started yet",
     });
 
     print('Service details stored successfully.');
@@ -67,7 +70,7 @@ void deleteOldServiceDetails() async {
     // Get documents older than two days
     QuerySnapshot oldDocuments = await serviceDetailsCollection
         .where('serviceDate',
-            isLessThan: currentTime.subtract(Duration(days: 2)))
+            isLessThan: currentTime.subtract(Duration(days: 10)))
         .get();
 
     // Delete old documents

@@ -4,21 +4,22 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0a535ed1-312c-4685-95de-3bb3eea69370" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../PlayStoreData/Untitled" beforeDir="false" />
+    <list default="true" id="1f36a167-8034-403a-b1d5-0606d21bc737" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../PlayStoreData/Untitled copy" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../PlayStoreData/private_key.pepk" beforeDir="false" afterPath="$PROJECT_DIR$/../PlayStoreData/private_key.pepk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/release/app-release.aab" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/app-release.aab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/Backened Part/Notification.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/Backened Part/Notification.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/Backened Part/getNotification.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/Backened Part/getNotification.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/release/app-release.aab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/app state/serviceDetails.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/app state/serviceDetails.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lib/presentation/Backened Part/sendNotification.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/Backened Part/sendNotification.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/ServiceDetails/widgets/list_item_widget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/ServiceDetails/widgets/list_item_widget.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/home_page_screen/getNumber.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/home_page_screen/getNumber.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lib/presentation/home_page_screen/home_page_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/home_page_screen/home_page_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/location/getCurrentLocation.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/log_in_two_screen/log_in_two_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/log_in_two_screen/log_in_two_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/otp_one_screen/otp_one_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/otp_one_screen/otp_one_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lib/presentation/select_address_screen/select_address_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/select_address_screen/select_address_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/select_address_screen/sendData_Firebase.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/select_address_screen/sendData_Firebase.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lib/presentation/user profile/profile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/user profile/profile.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../pubspec.yaml" afterDir="false" />
     </list>
@@ -35,14 +36,14 @@
   </component>
   <component name="GenerateSignedApkSettings">
     <option name="EXPORT_PRIVATE_KEY" value="false" />
-    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/../PlayStoreData/Untitled copy" />
+    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/../PlayStoreData/Untitled.jks" />
     <option name="KEY_ALIAS" value="key0" />
     <option name="REMEMBER_PASSWORDS" value="true" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectId" id="2dAfqHEsWTqQ00jraoxgAwkyPrW" />
+  <component name="ProjectId" id="2fMGvZtmvav7eDf4IsBAkPPmxrg" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -135,11 +136,11 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="0a535ed1-312c-4685-95de-3bb3eea69370" name="Changes" comment="" />
-      <created>1709455992795</created>
+      <changelist id="1f36a167-8034-403a-b1d5-0606d21bc737" name="Changes" comment="" />
+      <created>1713603764845</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1709455992795</updated>
+      <updated>1713603764845</updated>
     </task>
     <servers />
   </component>

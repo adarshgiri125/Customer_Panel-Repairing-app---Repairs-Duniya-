@@ -8,10 +8,13 @@ import 'package:customer_app/presentation/item_list/list.dart';
 import 'package:customer_app/presentation/home_page_screen/widgets/viewhierarchy_Item_widget.dart';
 import 'package:customer_app/presentation/location/location.dart';
 import 'package:customer_app/presentation/ServiceDetails/service_repair_screen.dart';
+import 'package:customer_app/presentation/log_in_two_screen/log_in_two_screen.dart';
 import 'package:customer_app/presentation/searchService/DetailsPage.dart';
 import 'package:customer_app/presentation/user%20profile/profile.dart';
 import 'package:customer_app/widgets/app_bar/appbar_menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -34,6 +37,11 @@ class HomePageScreen extends StatefulWidget {
 class _HomePageScreenState extends State<HomePageScreen> {
   TextEditingController locationController = TextEditingController();
   TextEditingController searchController = TextEditingController();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
   late bool showHalfPage;
 
@@ -41,6 +49,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   late GoogleMapController mapController;
   LocationService locationService = LocationService();
   LatLng? currentLocation;
+  User? _user;
 
   bool isLocationFetched = false;
 
@@ -51,13 +60,47 @@ class _HomePageScreenState extends State<HomePageScreen> {
     super.initState();
     showHalfPage = false;
     showLocation = false;
-    _getCurrentLocation();
+    
+    _auth.authStateChanges().listen((User? user) {
+      setState(() {
+        _user = user;
+        if (_user == null) {
+          // User is not authenticated, navigate to login screen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LogInOneScreen(),
+            ),
+          );
+        }
+      });
+    });
     _initializePermission();
+    setupDeviceToken();
     PushNotificationSystem notificationSystem = PushNotificationSystem();
     notificationSystem.whenNotificationReceived(context);
+    _getCurrentLocation();
+  }
+
+  Future<void> setupDeviceToken() async {
+    String? token = await _messaging.getToken();
+    _uploadToken(token!);
+    _messaging.onTokenRefresh.listen(_uploadToken);
+  }
+
+  Future<void> _uploadToken(String token) async {
+    try {
+      await _firestore
+          .collection('customers')
+          .doc(_user!.uid)
+          .set({'device_token': token}, SetOptions(merge: true));
+    } catch (e) {}
   }
 
   Future<void> _initializePermission() async {
+    String? phoneNumber = await getPhoneNumber(context);
+    print("hey this is the number $phoneNumber");
+    serviceDetails.userPhoneNumber = phoneNumber;
     bool isDenied = await Permission.notification.isDenied;
     if (isDenied) {
       print("Notification permission is denied. Requesting permission...");
@@ -66,8 +109,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     } else {
       print("notification permission enabled");
     }
-    String? phoneNumber = await getPhoneNumber();
-    serviceDetails.userPhoneNumber = phoneNumber;
+
   }
 
   Future<void> _getCurrentLocation() async {

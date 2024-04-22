@@ -7,20 +7,69 @@ import 'package:http/http.dart' as http;
 
 String? serviceName = serviceDetails.serviceName;
 String? phoneNumber = serviceDetails.userPhoneNumber;
-String? documentName = serviceDetails.serviceDocumentName;
 FirebaseAuth auth = FirebaseAuth.instance;
 String? user = auth.currentUser?.uid;
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+Timestamp timeStamp = Timestamp.now();
+
+bool job = false;
+String timing = '';
+DateTime currentTime = DateTime.now();
+DateTime bookingTime = DateTime.now();
+int time = -1;
+bool urgentBooking = false;
+DateTime date = timeStamp.toDate();
+GeoPoint? geoPoint = GeoPoint(serviceDetails.userLocation!.latitude,
+    serviceDetails.userLocation!.longitude);
+
+String service = "";
 
 String? address = serviceDetails.address;
 Future<void> sendNotificationsToNearbyTechnicians(
-  String serviceName,
-  double customerLatitude,
-  double customerLongitude,
-) async {
+    String serviceName,
+    double customerLatitude,
+    double customerLongitude,
+    String documentName) async {
   print("Sending notifications to nearby technicians...");
   print("phoneNumber is : $phoneNumber");
   print("document is : ${serviceDetails.serviceDocumentName}");
   print("user is : $user");
+
+  await FirebaseFirestore.instance
+      .collection("customers")
+      .doc(user)
+      .collection("serviceDetails")
+      .doc(documentName)
+      .get()
+      .then((snapshot) async {
+    if (snapshot.exists) {
+      job = snapshot.data()?['jobAcceptance'] ?? false;
+      time = snapshot.data()?['timeIndex'] ?? -1;
+      urgentBooking = snapshot.data()?['urgentBooking'] ?? false;
+      timeStamp = Timestamp.now();
+      if (urgentBooking == false) {
+        timeStamp = snapshot.data()?['serviceDate'] ?? Timestamp.now();
+        date = timeStamp.toDate();
+      }
+      if (urgentBooking == true) {
+        Timestamp.now();
+        date = timeStamp.toDate();
+      }
+      geoPoint = snapshot.data()?['userLocation'];
+      service = snapshot.data()?['serviceName']?.toString() ?? 'hello';
+      timeStamp = snapshot.data()?['DateTime'] ?? Timestamp.now();
+      bookingTime = timeStamp.toDate();
+      currentTime = DateTime.now();
+      if (time == 0) {
+        timing = 'Morning';
+      } else if (time == 1) {
+        timing = 'Afternoon';
+      } else if (time == 2) {
+        timing = 'Evening';
+      }
+    }
+  });
 
   List<DocumentSnapshot> nearbyTechnicians = await getNearbyTechnicians(
     serviceName,
@@ -29,16 +78,23 @@ Future<void> sendNotificationsToNearbyTechnicians(
   );
 
   /// admin section----->>>>>
-  List<String> adminDeviceTokens = await getAdminDeviceTokens();
+  print("geting details of admin... who is registered");
+  List<String> adminDeviceTokens =
+      await getAdminDeviceTokens(serviceDetails.city!);
+  print("$adminDeviceTokens.length");
   //send notification to admin
   for (var adminToken in adminDeviceTokens) {
     print("Sending notification to admin...");
-    notificationFormat("admin", address, phoneNumber, adminToken);
-
-    print("Waiting for admin response...");
-    // Your existing code to handle admin's response...
+    notificationFormat("admins", address, phoneNumber, adminToken);
   }
   ////<<<<<------
+
+  int availableTechniciansCount = nearbyTechnicians.length;
+  DocumentReference candoRef = FirebaseFirestore.instance
+      .collection("customers")
+      .doc(user)
+      .collection("serviceDetails")
+      .doc(serviceDetails.serviceDocumentName);
 
   print("Number of nearby technicians: ${nearbyTechnicians.length}");
   // Print the sorted list of technicians
@@ -60,14 +116,53 @@ Future<void> sendNotificationsToNearbyTechnicians(
 
     print("Technician $technicianUserID device token: $userDeviceToken");
 
-    DocumentReference candoRef = FirebaseFirestore.instance
-        .collection("customers")
-        .doc(user)
-        .collection("serviceDetails")
-        .doc(serviceDetails.serviceDocumentName);
-
     // Send notification to technician
     print("Sending notification to technician $technicianUserID...");
+    String customerTokenId = '';
+
+    await FirebaseFirestore.instance
+        .collection('customers')
+        .doc(user)
+        .get()
+        .then((snapshot) {
+      if (snapshot.data()!['device_token'] != null) {
+        customerTokenId = snapshot.data()!['device_token'].toString();
+      }
+    });
+
+    print("date: $date");
+    print("urgent: $urgentBooking");
+
+    //sending document to the technician side ------>>>
+    String techdocName = DateTime.now().millisecondsSinceEpoch.toString();
+    await _firestore
+        .collection('technicians')
+        .doc(technicianUserID)
+        .collection('serviceList')
+        .doc(techdocName)
+        .set({
+      'jobAcceptance': job,
+      'timeIndex': timing,
+      'date': date,
+      'serviceName': service,
+      'serviceId': documentName,
+      'customerPhone': phoneNumber,
+      'urgentBooking': urgentBooking,
+      'customerAddress': address,
+      'customerLocation': geoPoint,
+      'customerId': user,
+      'customerTokenId': customerTokenId,
+      'timestamp': FieldValue.serverTimestamp(),
+      'status': 'n',
+      'workStatus': "not started yet",
+    }, SetOptions(merge: true));
+
+    await candoRef.set(
+      {
+        'technicianAvailable': availableTechniciansCount.toString(),
+      },
+      SetOptions(merge: true),
+    );
 
     notificationFormat(technicianUserID, address, phoneNumber, userDeviceToken);
 
@@ -82,6 +177,9 @@ Future<void> sendNotificationsToNearbyTechnicians(
 
     // Continue sending notifications to other technicians even if one accepts the job
     if (jobAccepted) {
+      await candoRef.set({
+        'technicianAvailable': 0.toString(),
+      }, SetOptions(merge: true));
       print(
           "Job accepted by technician $technicianUserID. Stop to send notifications.");
       break;
@@ -132,7 +230,6 @@ notificationFormat(receiverID, address, phoneNumber, userDeviceToken) async {
     "notification": bodyNotification,
     "data": dataMap,
     "priority": "high",
-    // "sound": "notification.mp3",
     "to": userDeviceToken,
   };
 
@@ -145,6 +242,7 @@ notificationFormat(receiverID, address, phoneNumber, userDeviceToken) async {
     );
 
     if (response.statusCode == 200) {
+      print("Notification Payload: $notificationFormat");
       print("Notification sent successfully to technician $receiverID.");
     } else {
       print(
@@ -256,6 +354,11 @@ Future<double> calculateDistance(
   double endLat,
   double endLon,
 ) async {
+  if (endLat == 0.0 || endLon == 0.0) {
+    print("Invalid destination coordinates: Latitude or longitude is 0.0");
+    return double.infinity; // Return a large value to indicate invalid distance
+  }
+  print("check${startLat}, ${startLon}, $endLat, $endLon");
   final apiKey = 'AIzaSyArXVgSCF4LhaTp4M-ckCvz5ZzT2Xg68to';
   final apiUrl = 'https://maps.googleapis.com/maps/api/directions/json';
 
@@ -282,21 +385,35 @@ Future<double> calculateDistance(
   }
 }
 
-Future<List<String>> getAdminDeviceTokens() async {
+Future<List<String>> getAdminDeviceTokens(String city) async {
   try {
-    // Fetch all admin documents from Firestore
-    QuerySnapshot adminSnapshot =
-        await FirebaseFirestore.instance.collection("admins").get();
+    // Reference to the 'adminss' collection
+    CollectionReference adminsCollection =
+        FirebaseFirestore.instance.collection('adminss');
 
-    if (adminSnapshot.docs.isNotEmpty) {
-      // Extract device tokens from all admin documents
-      List<String> adminTokens = adminSnapshot.docs
-          .where((doc) => doc['token'] != null)
-          .map((doc) => doc['token'].toString())
-          .toList();
-      return adminTokens;
+    // Reference to the document representing the city under the 'adminss' collection
+    DocumentReference cityDocument = adminsCollection.doc(city);
+
+    // Fetch the document data for the specified city
+    DocumentSnapshot citySnapshot = await cityDocument.get();
+
+    if (citySnapshot.exists) {
+      // Extract device tokens from the city document
+      Map<String, dynamic> cityData =
+          citySnapshot.data() as Map<String, dynamic>;
+      List<String> cityTokens = [];
+
+      // Iterate through the devices and extract tokens
+      cityData.forEach((deviceId, deviceData) {
+        String token = deviceData['token'];
+        if (token != null) {
+          cityTokens.add(token.toString());
+        }
+      });
+
+      return cityTokens;
     } else {
-      print("No admin documents found.");
+      print("No admin documents found for city: $city");
       return [];
     }
   } catch (e) {

@@ -88,8 +88,7 @@ class _ProfileState extends State<Profile> {
               ElevatedButton(
                 onPressed: _logout,
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.black, // background color
-                  onPrimary: Colors.white, // text color
+                  foregroundColor: Colors.white, backgroundColor: Colors.black, // text color
                 ),
                 child: Text('Logout'),
               )

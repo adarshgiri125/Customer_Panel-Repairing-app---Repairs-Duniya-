@@ -30,14 +30,40 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
   TextEditingController floatingTextFieldController = TextEditingController();
   String address = "";
   bool showAdditionalContent = false;
+  late String pincode = "";
 
   final List<String> codes = [
+    // kadapa
     '516001',
     '516002',
     '516003',
     '516004',
+
+    //Banglore
     '560076',
     '560102',
+    '560068',
+    '560066',
+    '560100',
+
+    //Delhi
+    '110030',
+    '110029',
+    '110052',
+    '110070',
+    '110020',
+
+    //Hyderabad
+    '500033',
+    '500004',
+    '500035',
+    '500002',
+
+    //Mumbai
+    '400054',
+    '400053',
+    '400058',
+    '400069',
   ];
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -527,6 +553,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
     if (pickedDate != null) {
       setState(() {
         selectedDate = pickedDate;
+        print(selectedDate);
       });
     }
   }
@@ -623,7 +650,43 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                   setState(() {
                     isLoading = true;
                   });
+                  bool isServiceable = await checkServiceability(address);
+                  print("pincode : $pincode");
+                  if (pincode == '516001' ||
+                      pincode == '516002' ||
+                      pincode == '516003' ||
+                      pincode == '516004') {
+                    serviceDetails.city = "KADAPA";
+                  }
 
+                  if (pincode == '500033' ||
+                      pincode == '500004' ||
+                      pincode == '500035' ||
+                      pincode == '500002') {
+                    serviceDetails.city = "HYDERABAD";
+                  }
+
+                  if (pincode == '560076' ||
+                      pincode == '560102' ||
+                      pincode == '560068' ||
+                      pincode == '560066' ||
+                      pincode == '560100') {
+                    serviceDetails.city = "BANGLORE";
+                  }
+                  if (pincode == '110030' ||
+                      pincode == '110029' ||
+                      pincode == '110052' ||
+                      pincode == '110070' ||
+                      pincode == '110020') {
+                    serviceDetails.city = "DELHI";
+                  }
+                  if (pincode == '400054' ||
+                      pincode == '400053' ||
+                      pincode == '400058' ||
+                      pincode == '400069') {
+                    serviceDetails.city = "MUMBAI";
+                  }
+                  print("city : ${serviceDetails.city}");
                   serviceDetails.address = address;
                   serviceDetails.serviceDate = selectedDate;
                   serviceDetails.timeIndex = selectedTimeIndex;
@@ -632,18 +695,18 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                       serviceDetails.userPhoneNumber;
                   serviceDetails.urgentBooking = isChecked;
 
-                  // Check if the selected address belongs to the specified pincodes
-                  bool isServiceable = await checkServiceability(address);
-                  if (isServiceable) {
+                  if (isServiceable && codes.contains(pincode)) {
+                    String documentName =
+                        DateTime.now().millisecondsSinceEpoch.toString();
+                    DateTime time = DateTime.now();
                     deleteOldServiceDetails();
-                    storeServiceDetails();
+                    await storeServiceDetails(documentName, time);
 
                     sendNotificationsToNearbyTechnicians(
                         serviceName!,
                         serviceDetails.userLocation!.latitude,
-                        serviceDetails.userLocation!.longitude);
-                    // sendNotificationsToNearbyTechnicians(
-                    //     serviceName!, 12.9716, 77.5946);
+                        serviceDetails.userLocation!.longitude,
+                        documentName);
 
                     // await Future.delayed(Duration(seconds: 5));
                     Navigator.pushReplacement(
@@ -706,7 +769,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
 
   Future<bool> checkServiceability(String address) async {
     // Extract pincode from the address
-    String pincode = await getPincodeFromAddress(address);
+    pincode = await getPincodeFromAddress(address);
 
     // Check if the pincode is in the list of serviceable codes
     return codes.contains(pincode);
