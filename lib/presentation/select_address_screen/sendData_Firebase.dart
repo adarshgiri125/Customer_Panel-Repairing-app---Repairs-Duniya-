@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app%20state/serviceDetails.dart';
 import 'package:firebase_phone_auth_handler/firebase_phone_auth_handler.dart';
 
-Future<void> storeServiceDetails(String documentName, DateTime time) async {
+Future<void> storeServiceDetails(String documentName, DateTime time, String customerName) async {
   FirebaseAuth auth = FirebaseAuth.instance;
   User? user = auth.currentUser;
 
@@ -43,6 +43,7 @@ Future<void> storeServiceDetails(String documentName, DateTime time) async {
       'userCity': serviceDetails.city,
       'technicianAvailable': "0",
       'workStatus' : "not started yet",
+      'customerName' : customerName,
     });
 
     print('Service details stored successfully.');

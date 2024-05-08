@@ -30,7 +30,8 @@ Future<void> sendNotificationsToNearbyTechnicians(
     String serviceName,
     double customerLatitude,
     double customerLongitude,
-    String documentName) async {
+    String documentName,
+    String customerName) async {
   print("Sending notifications to nearby technicians...");
   print("phoneNumber is : $phoneNumber");
   print("document is : ${serviceDetails.serviceDocumentName}");
@@ -155,6 +156,7 @@ Future<void> sendNotificationsToNearbyTechnicians(
       'timestamp': FieldValue.serverTimestamp(),
       'status': 'n',
       'workStatus': "not started yet",
+      'customerName': customerName,
     }, SetOptions(merge: true));
 
     await candoRef.set(
@@ -166,24 +168,24 @@ Future<void> sendNotificationsToNearbyTechnicians(
 
     notificationFormat(technicianUserID, address, phoneNumber, userDeviceToken);
 
-    print("Waiting for technician $technicianUserID response...");
+    // print("Waiting for technician $technicianUserID response...");
 
-    bool jobAccepted = await Future.wait([
-      Future.delayed(Duration(seconds: 180)),
-      isJobAccepted(candoRef),
-    ]).then((results) => results[1] as bool);
+    // bool jobAccepted = await Future.wait([
+    //   Future.delayed(Duration(seconds: 180)),
+    //   isJobAccepted(candoRef),
+    // ]).then((results) => results[1] as bool);
 
     // bool jobAccepted = await isJobAccepted(candoRef);
 
     // Continue sending notifications to other technicians even if one accepts the job
-    if (jobAccepted) {
-      await candoRef.set({
-        'technicianAvailable': 0.toString(),
-      }, SetOptions(merge: true));
-      print(
-          "Job accepted by technician $technicianUserID. Stop to send notifications.");
-      break;
-    }
+    // if (jobAccepted) {
+    //   await candoRef.set({
+    //     'technicianAvailable': 0.toString(),
+    //   }, SetOptions(merge: true));
+    //   print(
+    //       "Job accepted by technician $technicianUserID. Stop to send notifications.");
+    //   break;
+    // }
   }
 }
 

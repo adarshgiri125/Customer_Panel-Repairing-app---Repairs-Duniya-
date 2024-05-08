@@ -4,23 +4,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1f36a167-8034-403a-b1d5-0606d21bc737" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../PlayStoreData/Untitled copy" beforeDir="false" />
+    <list default="true" id="2bbbde53-efae-4b92-bb2c-2a3ce4b96292" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../PlayStoreData/private_key.pepk" beforeDir="false" afterPath="$PROJECT_DIR$/../PlayStoreData/private_key.pepk" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/release/app-release.aab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/app state/serviceDetails.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/app state/serviceDetails.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/google-services.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/images/electrician.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/images/image 63booking.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../lib/presentation/Backened Part/sendNotification.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/Backened Part/sendNotification.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/ServiceDetails/widgets/list_item_widget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/ServiceDetails/widgets/list_item_widget.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/home_page_screen/getNumber.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/home_page_screen/getNumber.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/home_page_screen/home_page_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/home_page_screen/home_page_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lib/presentation/select_address_screen/select_address_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/select_address_screen/select_address_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/select_address_screen/sendData_Firebase.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/select_address_screen/sendData_Firebase.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/user profile/profile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/user profile/profile.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,7 +34,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectId" id="2fMGvZtmvav7eDf4IsBAkPPmxrg" />
+  <component name="ProjectId" id="2fYpeg0r6ct6zVqPhcLMI1P2Frw" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -136,11 +127,11 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="1f36a167-8034-403a-b1d5-0606d21bc737" name="Changes" comment="" />
-      <created>1713603764845</created>
+      <changelist id="2bbbde53-efae-4b92-bb2c-2a3ce4b96292" name="Changes" comment="" />
+      <created>1713987963286</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1713603764845</updated>
+      <updated>1713987963286</updated>
     </task>
     <servers />
   </component>

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app%20state/serviceDetails.dart';
 import 'package:customer_app/core/app_export.dart';
 import 'package:customer_app/presentation/Backened%20Part/sendNotification.dart';
@@ -12,7 +13,9 @@ import 'package:customer_app/widgets/app_bar/custom_app_bar.dart';
 import 'package:customer_app/widgets/custom_checkbox_button.dart';
 import 'package:customer_app/widgets/custom_elevated_button.dart';
 import 'package:customer_app/widgets/custom_outlined_button.dart';
+import 'package:firebase_phone_auth_handler/firebase_phone_auth_handler.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -31,6 +34,8 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
   String address = "";
   bool showAdditionalContent = false;
   late String pincode = "";
+  User? user = auth.currentUser;
+  String customerName = "user1";
 
   final List<String> codes = [
     // kadapa
@@ -120,6 +125,8 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                   SizedBox(height: 9.v),
                   if (showAdditionalContent) ...[
                     SizedBox(height: 10.v),
+                    takeName(context),
+                    SizedBox(height: 10.v),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
@@ -155,6 +162,8 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            takeName(context),
+                            SizedBox(height: 10),
                             Padding(
                               padding: EdgeInsets.only(top: 14.v, bottom: 15.v),
                               child: Text(
@@ -191,6 +200,36 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
         ),
         bottomNavigationBar: _buildButton2(context),
       ),
+    );
+  }
+
+  Widget takeName(BuildContext context) {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('customers')
+          .doc(user!.uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          Map<String, dynamic>? data =
+              snapshot.data!.data() as Map<String, dynamic>?;
+
+          String hintText = data != null && data['customerName'] != null
+              ? data['customerName']
+              : 'No name';
+
+          return TextField(
+            decoration: InputDecoration(
+              hintText: hintText,
+            ),
+            onChanged: (newName) {
+              customerName = newName;
+            },
+          );
+        } else {
+          return CircularProgressIndicator(); // Or any other loading indicator
+        }
+      },
     );
   }
 
@@ -650,43 +689,51 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                   setState(() {
                     isLoading = true;
                   });
+
+                  // Show circular loading indicator
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  );
+
                   bool isServiceable = await checkServiceability(address);
                   print("pincode : $pincode");
+                  // Assign city based on pincode
                   if (pincode == '516001' ||
                       pincode == '516002' ||
                       pincode == '516003' ||
                       pincode == '516004') {
                     serviceDetails.city = "KADAPA";
-                  }
-
-                  if (pincode == '500033' ||
+                  } else if (pincode == '500033' ||
                       pincode == '500004' ||
                       pincode == '500035' ||
                       pincode == '500002') {
                     serviceDetails.city = "HYDERABAD";
-                  }
-
-                  if (pincode == '560076' ||
+                  } else if (pincode == '560076' ||
                       pincode == '560102' ||
                       pincode == '560068' ||
                       pincode == '560066' ||
                       pincode == '560100') {
                     serviceDetails.city = "BANGLORE";
-                  }
-                  if (pincode == '110030' ||
+                  } else if (pincode == '110030' ||
                       pincode == '110029' ||
                       pincode == '110052' ||
                       pincode == '110070' ||
                       pincode == '110020') {
                     serviceDetails.city = "DELHI";
-                  }
-                  if (pincode == '400054' ||
+                  } else if (pincode == '400054' ||
                       pincode == '400053' ||
                       pincode == '400058' ||
                       pincode == '400069') {
                     serviceDetails.city = "MUMBAI";
                   }
                   print("city : ${serviceDetails.city}");
+                  await updateName(customerName);
                   serviceDetails.address = address;
                   serviceDetails.serviceDate = selectedDate;
                   serviceDetails.timeIndex = selectedTimeIndex;
@@ -700,15 +747,18 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                         DateTime.now().millisecondsSinceEpoch.toString();
                     DateTime time = DateTime.now();
                     deleteOldServiceDetails();
-                    await storeServiceDetails(documentName, time);
+                    await storeServiceDetails(documentName, time, customerName);
 
-                    sendNotificationsToNearbyTechnicians(
+                    await sendNotificationsToNearbyTechnicians(
                         serviceName!,
                         serviceDetails.userLocation!.latitude,
                         serviceDetails.userLocation!.longitude,
-                        documentName);
+                        documentName,
+                        customerName);
 
-                    // await Future.delayed(Duration(seconds: 5));
+                    // Dismiss loading indicator
+                    Navigator.pop(context);
+
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
@@ -716,6 +766,9 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                       ),
                     );
                   } else {
+                    // Dismiss loading indicator
+                    Navigator.pop(context);
+
                     // Address is not serviceable, show a message to the user
                     showDialog(
                       context: context,
@@ -745,6 +798,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                       },
                     );
                   }
+
                   setState(() {
                     isLoading = false;
                   });
@@ -773,6 +827,13 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
 
     // Check if the pincode is in the list of serviceable codes
     return codes.contains(pincode);
+  }
+
+  Future<void> updateName(String newName) async {
+    FirebaseFirestore.instance.collection('customers').doc(user!.uid).set(
+      {'name': newName},
+      SetOptions(merge: true),
+    );
   }
 
   Future<String> getPincodeFromAddress(String address) async {
