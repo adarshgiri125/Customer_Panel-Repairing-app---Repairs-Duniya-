@@ -169,9 +169,11 @@ class _AcServiceRepairScreenState extends State<AcServiceRepairScreen> {
       items = Plumber;
     } else if (widget.itemName == 'Electrician') {
       items = Electrician;
-    } else if (widget.itemName == 'Painter') {
-      items = Painter;
-    } else if (widget.itemName == 'Construction/Renovation') {
+    }
+    // } else if (widget.itemName == 'Painter') {
+    //   items = Painter;
+    // }
+    else if (widget.itemName == 'Construction/Renovation') {
       items = Construction;
     }
 
@@ -215,7 +217,9 @@ class _AcServiceRepairScreenState extends State<AcServiceRepairScreen> {
           onPressed: isProceedEnabled
               ? () {
                   print("Selected Items: $selectedItems");
+
                   serviceDetails.services = selectedItems;
+                  print("hey check : ${serviceDetails.services![0]}");
                   Navigator.pushNamed(
                     context,
                     AppRoutes.selectAddressScreen,

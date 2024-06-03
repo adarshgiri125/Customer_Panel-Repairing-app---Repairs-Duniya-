@@ -18,15 +18,16 @@ List<Map<String, dynamic>> items = [
 List<Map<String, dynamic>> otheritems = [
   {"imagePath": ImageConstant.electrician, "itemName": "Electrician"},
   {"imagePath": ImageConstant.plumber, "itemName": "Plumber"},
-  {"imagePath": ImageConstant.painter, "itemName": "Painter"},
+  // {"imagePath": ImageConstant.painter, "itemName": "Painter"},
   {
     "imagePath": ImageConstant.construction,
     "itemName": "Construction/Renovation"
   },
 ];
 
+// {"imagePath": ImageConstant.painter, "itemName": "Painter"},
+
 List<Map<String, dynamic>> confirmation = [
-  {"imagePath": ImageConstant.painter, "itemName": "Painter"},
   {"imagePath": ImageConstant.electrician, "itemName": "Electrician"},
   {"imagePath": ImageConstant.plumber, "itemName": "Plumber"},
   {
@@ -110,14 +111,14 @@ List<dynamic> Plumber = [
   {'title': 'Not sure about issue/Othre issue'},
 ];
 
-List<dynamic> Painter = [
-  {'title': 'Repainting for whole house'},
-  {'title': 'White painting to top roof (Protection for sunlight & heat)'},
-  {'title': 'Painting for whole house'},
-  {'title': 'Painting for single room'},
-  {'title': 'Painting for single wall'},
-  {'title': 'Not sure about service/Check up'},
-];
+// List<dynamic> Painter = [
+//   {'title': 'Repainting for whole house'},
+//   {'title': 'White painting to top roof (Protection for sunlight & heat)'},
+//   {'title': 'Painting for whole house'},
+//   {'title': 'Painting for single room'},
+//   {'title': 'Painting for single wall'},
+//   {'title': 'Not sure about service/Check up'},
+// ];
 
 List<dynamic> Construction = [
   {'title': 'Full house construction - Free visit of Engineer'},

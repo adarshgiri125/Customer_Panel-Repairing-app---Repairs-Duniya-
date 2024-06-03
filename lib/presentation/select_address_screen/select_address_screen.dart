@@ -35,7 +35,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
   bool showAdditionalContent = false;
   late String pincode = "";
   User? user = auth.currentUser;
-  String customerName = "user1";
+  late String customerName = "";
 
   final List<String> codes = [
     // kadapa
@@ -85,118 +85,127 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         appBar: _buildAppBar(context),
-        body: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: SizedBox(
-              width: double.maxFinite,
-              child: Column(
-                children: [
-                  _buildFrame(context),
-                  SizedBox(height: 23.v),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 7.0),
-                      ),
-                      CustomCheckboxButton(
-                        value: isChecked,
-                        onChange: (newValue) {
-                          setState(() {
-                            isChecked = newValue;
-                            showAdditionalContent = newValue;
-                          });
-                        },
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 0.0),
-                        child: Text(
-                          "Urgent Booking",
-                          style: CustomTextStyles.bodyLargeGray700.copyWith(
-                            fontSize: 18.0,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 9.v),
-                  if (showAdditionalContent) ...[
-                    SizedBox(height: 10.v),
-                    takeName(context),
-                    SizedBox(height: 10.v),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 22.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+        body: Column(
+          children: [
+            _buildFrame(context), // This is the map part
+            Expanded(
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 23.v),
+                        Row(
                           children: [
-                            Text(
-                              "Technician reaches your doorstep within 1 hour from successful booking completion",
-                              style: CustomTextStyles.bodyLargeGray700.copyWith(
-                                fontSize: 14.0,
-                                color: Colors.black,
+                            Padding(
+                              padding: EdgeInsets.only(left: 7.0),
+                            ),
+                            CustomCheckboxButton(
+                              value: isChecked,
+                              onChange: (newValue) {
+                                setState(() {
+                                  isChecked = newValue;
+                                  showAdditionalContent = newValue;
+                                });
+                              },
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 0.0),
+                              child: Text(
+                                "Urgent Booking",
+                                style:
+                                    CustomTextStyles.bodyLargeGray700.copyWith(
+                                  fontSize: 18.0,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
-                            SizedBox(height: 15.v),
-                            Text(
-                              "Additional charge of Rs.80/- after service completion",
-                              style: CustomTextStyles.bodyLargeGray700.copyWith(
-                                fontSize: 14.0,
-                                color: Colors.red,
-                              ),
-                            ),
-                            SizedBox(height: 5.v),
                           ],
                         ),
-                      ),
-                    ),
-                  ] else ...[
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 22.h),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            takeName(context),
-                            SizedBox(height: 10),
-                            Padding(
-                              padding: EdgeInsets.only(top: 14.v, bottom: 15.v),
+                        SizedBox(height: 9.v),
+                        if (showAdditionalContent) ...[
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 22.h),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  takeName(context),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    "Technician reaches your doorstep within 1 hour from successful booking completion",
+                                    style: CustomTextStyles.bodyLargeGray700
+                                        .copyWith(
+                                      fontSize: 14.0,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  SizedBox(height: 15.v),
+                                  Text(
+                                    "Additional charge of Rs.80/- after service completion",
+                                    style: CustomTextStyles.bodyLargeGray700
+                                        .copyWith(
+                                      fontSize: 14.0,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5.v),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ] else ...[
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 22.h),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 14.v, bottom: 15.v),
+                                    child: Text(
+                                      "Choose Date:",
+                                      style: CustomTextStyles.bodyLargeGray700,
+                                    ),
+                                  ),
+                                  _buildButton1(context),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 20.v),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 24.h),
                               child: Text(
-                                "Choose Date:",
+                                "Choose Preferred time slot:",
                                 style: CustomTextStyles.bodyLargeGray700,
                               ),
                             ),
-                            _buildButton1(context),
-                          ],
-                        ),
-                      ),
+                          ),
+                          SizedBox(height: 15.v),
+                          _buildFrame3(context),
+                          SizedBox(height: 5.v),
+                          _buildFrame4(context),
+                          SizedBox(height: 5.v),
+                          takeName(context),
+                          SizedBox(height: 10),
+                        ],
+                      ],
                     ),
-                    SizedBox(height: 20.v),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 24.h),
-                        child: Text(
-                          "Choose Preferred time slot:",
-                          style: CustomTextStyles.bodyLargeGray700,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 15.v),
-                    _buildFrame3(context),
-                    SizedBox(height: 5.v),
-                    _buildFrame4(context),
-                    SizedBox(height: 5.v),
-                  ],
-                ],
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         ),
         bottomNavigationBar: _buildButton2(context),
       ),
@@ -216,18 +225,55 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
 
           String hintText = data != null && data['customerName'] != null
               ? data['customerName']
-              : 'No name';
+              : 'Enter Your Name';
+          customerName = data != null && data['customerName'] != null
+              ? data['customerName']
+              : "";
 
-          return TextField(
-            decoration: InputDecoration(
-              hintText: hintText,
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Enter Your Name', // Add label text above border
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.grey,
+                  ),
+                ),
+                SizedBox(
+                    height: 5.0), // Add spacing between label and text field
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: hintText,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                        width: 2.0,
+                      ),
+                    ),
+                  ),
+                  style: TextStyle(
+                      color: Colors.black), // Ensure text appears dark
+                  onChanged: (newName) {
+                    customerName = newName;
+                    print("changing name : $customerName");
+                  },
+                ),
+              ],
             ),
-            onChanged: (newName) {
-              customerName = newName;
-            },
           );
         } else {
-          return CircularProgressIndicator(); // Or any other loading indicator
+          return CircularProgressIndicator();
         }
       },
     );
@@ -686,6 +732,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
               : const ButtonStyle(),
           onPressed: isButtonEnabled
               ? () async {
+                  await updateName(customerName);
                   setState(() {
                     isLoading = true;
                   });
@@ -733,7 +780,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                     serviceDetails.city = "MUMBAI";
                   }
                   print("city : ${serviceDetails.city}");
-                  await updateName(customerName);
+
                   serviceDetails.address = address;
                   serviceDetails.serviceDate = selectedDate;
                   serviceDetails.timeIndex = selectedTimeIndex;
@@ -741,8 +788,40 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                   serviceDetails.userPhoneNumber =
                       serviceDetails.userPhoneNumber;
                   serviceDetails.urgentBooking = isChecked;
-
-                  if (isServiceable && codes.contains(pincode)) {
+                  print("customerName : $customerName");
+                  if (customerName.isEmpty) {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("Missing Name!"),
+                          content: Text("Please Enter Your Name!"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor:
+                                    Colors.black, // Set the background color
+                              ),
+                              child: Text(
+                                "OK",
+                                style: TextStyle(
+                                  color: Colors.white, // Set the text color
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    return;
+                  }
+                  if (isServiceable &&
+                      codes.contains(pincode) &&
+                      customerName.isNotEmpty) {
                     String documentName =
                         DateTime.now().millisecondsSinceEpoch.toString();
                     DateTime time = DateTime.now();
@@ -831,7 +910,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
 
   Future<void> updateName(String newName) async {
     FirebaseFirestore.instance.collection('customers').doc(user!.uid).set(
-      {'name': newName},
+      {'customerName': newName},
       SetOptions(merge: true),
     );
   }

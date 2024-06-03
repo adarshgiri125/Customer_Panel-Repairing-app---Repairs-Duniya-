@@ -1,6 +1,9 @@
+import 'dart:ffi';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class ServiceDetailsList extends StatelessWidget {
@@ -27,27 +30,228 @@ class ServiceDetailsList extends StatelessWidget {
                 var data = snapshot.data![index];
 
                 // Determine background color based on jobAcceptance
-                Color backgroundColor = data['jobAcceptance']
-                    ? Colors.green
-                    : Color.fromARGB(255, 230, 185, 5);
+                Color backgroundColor =
+                    data['jobAcceptance'] ? Colors.white : Colors.white;
 
                 // Build a Card with service details
                 return Card(
                   color: backgroundColor,
                   child: ListTile(
                     title: Text('ServiceName: ${data['serviceName']}'),
+                    // title: data['technicanNotAvailable']
+                    //     ? Text("Pending")
+                    //     : data['jobStatus']
+                    //         ? Text("Completed")
+                    //         : Text("Accepted"),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        SizedBox(
+                          height: 3,
+                        ),
                         Text('Services: ${data['serviceList']}'),
                         Text(
-                            'Date: ${DateFormat('dd-MM-yyyy').format(data['DateTime'].toDate())}'),
+                          'Date: ${DateFormat('dd-MM-yyyy').format(data['DateTime'].toDate())}',
+                        ),
                         Text(
-                            'Time: ${DateFormat('HH:mm:ss').format(data['DateTime'].toDate())}'),
+                          'Time: ${DateFormat('HH:mm:ss').format(data['DateTime'].toDate())}',
+                        ),
                         data['jobAcceptance']
-                            ? Text('Status: BOOKING HAS ACCEPTED')
-                            : Text('Status: BOOKING HAS NOT ACCEPTED YET'),
-                        // Add more fields as needed
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  data['jobStatus']
+                                      ? Text("Status : Completed")
+                                      : Text("Status : Accepted"),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.bottomLeft,
+                                        child: CircleAvatar(
+                                          radius: 40,
+                                          backgroundImage: NetworkImage(
+                                            data['profilePictureUrl'],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            RichText(
+                                              text: TextSpan(
+                                                style: TextStyle(
+                                                    color: Colors.black),
+                                                children: [
+                                                  TextSpan(
+                                                    text: 'Technician Name : ',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  TextSpan(
+                                                    text:
+                                                        '${data['technicianName']}',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(height: 5),
+                                            RichText(
+                                              text: TextSpan(
+                                                style: TextStyle(
+                                                    color: Colors.black),
+                                                children: [
+                                                  TextSpan(
+                                                    text: 'Rating : ',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  WidgetSpan(
+                                                    alignment:
+                                                        PlaceholderAlignment
+                                                            .middle,
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .green, // Set background color to green
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                5), // Set border radius
+                                                      ),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 10),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          Transform.translate(
+                                                            offset: const Offset(
+                                                                0,
+                                                                0), // Adjust the offset to align the star vertically
+                                                            child: const Icon(
+                                                              Icons.star,
+                                                              size:
+                                                                  19, // Adjust the size of the icon
+                                                              color: Colors
+                                                                  .white, // Set icon color to white
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 5),
+                                                          Text(
+                                                            '${data['rating']}',
+                                                            style: GoogleFonts
+                                                                .openSans(
+                                                              fontSize: 10,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              color: Colors
+                                                                  .white, // Set text color to white
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(height: 5),
+                                            RichText(
+                                              text: TextSpan(
+                                                style: TextStyle(
+                                                    color: Colors.black),
+                                                children: [
+                                                  TextSpan(
+                                                    text: 'Works Completed : ',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  TextSpan(
+                                                    text:
+                                                        '${data['jobCompleted']}',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(height: 5),
+                                            RichText(
+                                              text: TextSpan(
+                                                style: TextStyle(
+                                                    color: Colors.black),
+                                                children: [
+                                                  TextSpan(
+                                                    text: 'Nature : ',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  WidgetSpan(
+                                                    alignment:
+                                                        PlaceholderAlignment
+                                                            .middle,
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 2,
+                                                          horizontal: 8),
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                          color: Colors
+                                                              .green, // Set border color to green
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                4), // Set border radius
+                                                      ),
+                                                      child: Text(
+                                                        '${data['status']}',
+                                                        style: GoogleFonts
+                                                            .openSans(
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color: Colors
+                                                              .green, // Set text color to green
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )
+                            : Text('Status: Pending'),
                       ],
                     ),
                   ),
@@ -80,22 +284,109 @@ class ServiceDetailsList extends StatelessWidget {
           .orderBy('DateTime', descending: true)
           .get();
 
-      // Convert each document to a map and add to the list
-      List<Map<String, dynamic>> serviceDetailsList = snapshot.docs.map((doc) {
+      // Fetch additional details for each service detail document
+      List<Map<String, dynamic>> serviceDetailsList = [];
+
+      for (DocumentSnapshot doc in snapshot.docs) {
         var data = doc.data() as Map<String, dynamic>;
-        return {
-          'address': data['address'],
-          'serviceDate': data['serviceDate'],
-          'timeIndex': data['timeIndex'],
-          'urgentBooking': data['urgentBooking'],
-          'jobAcceptance': data['jobAcceptance'],
-          'userPhoneNumber': data['userPhoneNumber'],
-          'serviceName': data['serviceName'],
-          'serviceList': data['serviceList'],
-          'DateTime': data['DateTime'],
-          'jobAcceptance': data['jobAcceptance']
-        };
-      }).toList();
+
+        // Only fetch additional technician details if job acceptance is true
+        if (data['jobAcceptance']) {
+          // Fetch technician details using technicianPhoneNumber
+          String technicianPhoneNumber = data['userPhoneNumber'];
+
+          QuerySnapshot technicianSnapshot = await FirebaseFirestore.instance
+              .collection('technicians')
+              .where('phone', isEqualTo: technicianPhoneNumber)
+              .limit(1)
+              .get();
+
+          if (technicianSnapshot.docs.isNotEmpty) {
+            var technicianData =
+                technicianSnapshot.docs.first.data() as Map<String, dynamic>;
+            String technicianName = technicianData['technicianName'] ?? "";
+            String technicianUserId = technicianData['userId'] ?? "";
+            String profilePictureUrl = technicianData
+                    .containsKey('technicianProfilePicture')
+                ? technicianData['technicianProfilePicture']
+                : "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500";
+            num? ratingValue = technicianData['Rating'];
+            double rating = (ratingValue ?? 0.0).toDouble();
+
+            String roundedRating = rating.toStringAsFixed(1);
+            String status = "";
+            String jobCompleted =
+                (technicianData['workDone'] ?? "0").toString();
+
+            int polite = technicianData['polite'] ?? 0;
+            int punctual = technicianData['punctual'] ?? 0;
+            int quickAndAccurate = technicianData['quickAndAccurate'] ?? 0;
+            int friendly = technicianData['friendly'] ?? 0;
+
+            int maxRating = [polite, punctual, quickAndAccurate, friendly]
+                .reduce((a, b) => a > b ? a : b);
+
+            if (maxRating == polite) {
+              status = "Polite";
+            } else if (maxRating == punctual) {
+              // Punctual is the maximum rating
+              // Do something...
+              status = "Punctual";
+            } else if (maxRating == quickAndAccurate) {
+              // Quick and Accurate is the maximum rating
+              // Do something...
+              status = "Quick And Accurate";
+            } else if (maxRating == friendly) {
+              // Friendly is the maximum rating
+              // Do something...
+              status = "Friendly";
+            } else {
+              status = "Polite";
+            }
+            String workStatus = data['workStatus'];
+            bool jobStatus = false;
+            if (workStatus == "Complete Working") {
+              jobStatus = true;
+            }
+            // Add technician details to the serviceDetailsList
+            serviceDetailsList.add({
+              'address': data['address'],
+              'serviceDate': data['serviceDate'],
+              'timeIndex': data['timeIndex'],
+              'urgentBooking': data['urgentBooking'],
+              'jobAcceptance': data['jobAcceptance'],
+              'userPhoneNumber': data['userPhoneNumber'],
+              'serviceName': data['serviceName'],
+              'serviceList': data['serviceList'],
+              'DateTime': data['DateTime'],
+              'jobAcceptance': data['jobAcceptance'],
+              'technicianName': technicianName,
+              'technicianUserId': technicianUserId,
+              'profilePictureUrl': profilePictureUrl,
+              'rating': roundedRating,
+              'status': status,
+              'jobCompleted': jobCompleted,
+              'jobStatus': jobStatus,
+              'technicanNotAvailable': false,
+            });
+          }
+        } else {
+          // If job acceptance is false, add service details without technician details
+          serviceDetailsList.add({
+            'address': data['address'],
+            'serviceDate': data['serviceDate'],
+            'timeIndex': data['timeIndex'],
+            'urgentBooking': data['urgentBooking'],
+            'jobAcceptance': data['jobAcceptance'],
+            'userPhoneNumber': data['userPhoneNumber'],
+            'serviceName': data['serviceName'],
+            'serviceList': data['serviceList'],
+            'DateTime': data['DateTime'],
+            'jobAcceptance': data['jobAcceptance'],
+            'technicanNotAvailable': true,
+          });
+        }
+      }
 
       return serviceDetailsList;
     } else {

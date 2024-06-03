@@ -3,6 +3,8 @@ import 'package:customer_app/app%20state/app_state.dart';
 import 'package:customer_app/app%20state/serviceDetails.dart';
 import 'package:customer_app/presentation/Backened%20Part/Notification.dart';
 import 'package:customer_app/presentation/Backened%20Part/getNotification.dart';
+import 'package:customer_app/presentation/Buy%20Appliance/screens/home.dart';
+import 'package:customer_app/presentation/customer_Rating/customer_rating.dart';
 import 'package:customer_app/presentation/home_page_screen/getNumber.dart';
 import 'package:customer_app/presentation/item_list/list.dart';
 import 'package:customer_app/presentation/home_page_screen/widgets/viewhierarchy_Item_widget.dart';
@@ -50,6 +52,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   LocationService locationService = LocationService();
   LatLng? currentLocation;
   User? _user;
+  String userID = "";
 
   bool isLocationFetched = false;
 
@@ -60,10 +63,11 @@ class _HomePageScreenState extends State<HomePageScreen> {
     super.initState();
     showHalfPage = false;
     showLocation = false;
-    
+
     _auth.authStateChanges().listen((User? user) {
       setState(() {
         _user = user;
+
         if (_user == null) {
           // User is not authenticated, navigate to login screen
           Navigator.pushReplacement(
@@ -72,14 +76,216 @@ class _HomePageScreenState extends State<HomePageScreen> {
               builder: (context) => LogInOneScreen(),
             ),
           );
+          return;
         }
+
+        // Perform actions dependent on user authentication here
+        userID = user!.uid;
+        _fetchUnratedServices(userID);
+        PushNotificationSystem notificationSystem = PushNotificationSystem();
+        notificationSystem.whenNotificationReceived(context);
+        _getCurrentLocation();
+
+        // Now that userID is updated, you can print it here
+        print("check2 : $userID");
       });
     });
+
     _initializePermission();
     setupDeviceToken();
-    PushNotificationSystem notificationSystem = PushNotificationSystem();
-    notificationSystem.whenNotificationReceived(context);
-    _getCurrentLocation();
+  }
+
+  Future<void> _fetchUnratedServices(String user) async {
+    print("check3 : $user");
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('customers')
+          .doc(user)
+          .collection('serviceDetails')
+          .where('workStatus', isEqualTo: 'Complete Working')
+          .where('rating', isEqualTo: false)
+          .limit(1) // Limit to only fetch the first unrated service
+          .get();
+      print("hy");
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot firstService = querySnapshot.docs.first;
+        String technicianNumber = firstService['userPhoneNumber'];
+        print("$technicianNumber");
+
+        String technicianName = "not-available";
+        String profilePictureUrl = "";
+        String technicianUserId = "";
+
+        FirebaseFirestore.instance
+            .collection('technicians')
+            .where('phone', isEqualTo: technicianNumber)
+            .limit(1)
+            .get()
+            .then((techniciansSnapshot) {
+          if (techniciansSnapshot.docs.isNotEmpty) {
+            print("inside");
+            technicianName = techniciansSnapshot.docs.first['technicianName'];
+            technicianUserId = techniciansSnapshot.docs.first['userId'];
+            profilePictureUrl = techniciansSnapshot.docs.first
+                    .data()
+                    .containsKey('technicianProfilePicture')
+                ? techniciansSnapshot.docs.first['technicianProfilePicture']
+                : "";
+            print("${techniciansSnapshot.docs.first['technicianName']}");
+            print("inside : $technicianName");
+          }
+
+          print("outside : $technicianName");
+
+          String lastService = firstService[
+              'serviceName']; // Replace with the actual field name in your document
+
+          // Store the context outside the builder function
+          BuildContext context = this.context;
+          // https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500
+          // Display the BottomRateButton, for example in a modal bottom sheet
+          showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              final backgroundImage = profilePictureUrl != null &&
+                      profilePictureUrl.isNotEmpty
+                  ? NetworkImage(
+                      profilePictureUrl) // Use the retrieved URL if available
+                  : NetworkImage(
+                      'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'); // Default image URL
+              return SizedBox(
+                height: 300,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CircleAvatar(
+                      radius: 45,
+                      backgroundImage: backgroundImage,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Name : $technicianName',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Last Service: $lastService',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          // Add the cancel button
+                          style: ElevatedButton.styleFrom(
+                            elevation: 10, // Adjust the elevation as needed
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8), // Adjust the border radius as needed
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 16, horizontal: 24),
+                            backgroundColor:
+                                Colors.red, // Set the background color to red
+
+                            // Set the background color to red
+                          ),
+                          onPressed: () async {
+                            await FirebaseFirestore.instance
+                                .collection('customers')
+                                .doc(_user!.uid)
+                                .collection('serviceDetails')
+                                .doc(firstService
+                                    .id) // Assuming you have the Document ID of the service
+                                .update({'rating': true});
+                            Navigator.pop(
+                                context); // Close the bottom sheet when cancel is pressed
+                            // Close the bottom sheet when cancel is pressed
+                          },
+                          child: Padding(
+                            padding:
+                                EdgeInsets.all(8), // Add padding to the text
+                            child: Text(
+                              'cancel',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 10, // Adjust the elevation as needed
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8), // Adjust the border radius as needed
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 16, horizontal: 24),
+                            backgroundColor:
+                                Colors.green, // Add padding to the button
+                          ),
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            await FirebaseFirestore.instance
+                                .collection('customers')
+                                .doc(_user!.uid)
+                                .collection('serviceDetails')
+                                .doc(firstService
+                                    .id) // Assuming you have the Document ID of the service
+                                .update({'rating': true});
+
+                            // Navigate to the rating screen and pass service details
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CustomerRatingScreen(
+                                  technicianName: technicianName,
+                                  lastService: lastService,
+                                  serviceId: firstService.id,
+                                  userId: technicianUserId,
+                                  profilePictureUrl: profilePictureUrl,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding:
+                                EdgeInsets.all(8), // Add padding to the text
+                            child: Text(
+                              'Give Rating',
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Add some space between the buttons
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        });
+      } else {
+        // No unrated services found
+        print('No unrated services found.');
+      }
+    } catch (e) {
+      print('Error fetching unrated service: $e');
+      // Handle errors, e.g., show a snackbar or retry fetching
+    }
   }
 
   Future<void> setupDeviceToken() async {
@@ -109,7 +315,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
     } else {
       print("notification permission enabled");
     }
-
   }
 
   Future<void> _getCurrentLocation() async {
@@ -170,12 +375,16 @@ class _HomePageScreenState extends State<HomePageScreen> {
                       textAlign: TextAlign.left,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 8),
                   _buildHomePageStaggered(context),
                   SizedBox(height: 5),
+                  _buildHomePageRow2(context),
+
+                  SizedBox(height: 33),
 
                   _buildHomePageRow(context),
-                  SizedBox(height: 33),
+                  SizedBox(height: 10),
+
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: 24), // Adjusted padding
@@ -404,6 +613,81 @@ class _HomePageScreenState extends State<HomePageScreen> {
                     buttonStyle: CustomButtonStyles.none,
                     decoration: CustomButtonStyles
                         .gradientPrimaryToOnErrorContainerDecoration,
+                  ),
+                ],
+              ),
+            ),
+
+            // Added a small space between the text and the image
+            CustomImageView(
+              imagePath: ImageConstant.imgImage52,
+              height: 223.v,
+              width: 123.h,
+              // margin: EdgeInsets.only(left: 2.h), // Removed the margin
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHomePageRow2(BuildContext context) {
+    return Align(
+      alignment: Alignment.center,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 25.h),
+        decoration: AppDecoration.gradientOrangeAToErrorContainer.copyWith(
+          borderRadius: BorderRadiusStyle.roundedBorder10,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                left: 17.h,
+                top: 35.v,
+                bottom: 20.v,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "BUY APPLIANCES",
+                    style: CustomTextStyles.titleLargeBold_1,
+                  ),
+                  SizedBox(height: 6.v),
+                  SizedBox(
+                    width: 174.h,
+                    child: Text(
+                      "BUY HOME APPLIANCES IN MINIMUM COST",
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: CustomTextStyles.bodyMediumGray50.copyWith(
+                        height: 1.50,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 37.v),
+                  CustomElevatedButton(
+                    height: 44.v,
+                    width: 156.h,
+                    text: "BUY",
+                    buttonStyle: CustomButtonStyles.none,
+                    decoration: CustomButtonStyles
+                        .gradientPrimaryToOnErrorContainerDecoration,
+                    onPressed: () {
+                      // Add your on-press action here
+                      print("Button pressed!");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeScreen(),
+                        ),
+                      );
+                      // You can also call other methods or perform actions as needed
+                    },
                   ),
                 ],
               ),

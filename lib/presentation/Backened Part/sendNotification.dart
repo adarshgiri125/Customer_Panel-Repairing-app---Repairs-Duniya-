@@ -157,6 +157,7 @@ Future<void> sendNotificationsToNearbyTechnicians(
       'status': 'n',
       'workStatus': "not started yet",
       'customerName': customerName,
+      'subCategory': serviceDetails.services![0],
     }, SetOptions(merge: true));
 
     await candoRef.set(

@@ -88,11 +88,18 @@ class _ProfileState extends State<Profile> {
               ElevatedButton(
                 onPressed: _logout,
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.black, // text color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        0), // Set borderRadius to 0 for a square button
+                  ),
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.black,
                 ),
-                child: Text('Logout'),
+                child: Padding(
+                  padding: EdgeInsets.all(8.0), // Adjust the padding as needed
+                  child: Text('Logout'),
+                ),
               )
-
             ],
           ),
         ),
@@ -100,6 +107,7 @@ class _ProfileState extends State<Profile> {
     );
   }
 }
+
 void deleteLoginInfo() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -107,7 +115,3 @@ void deleteLoginInfo() async {
   await prefs.remove('user_token');
   await prefs.remove('expiration_date');
 }
-
-
-
-
