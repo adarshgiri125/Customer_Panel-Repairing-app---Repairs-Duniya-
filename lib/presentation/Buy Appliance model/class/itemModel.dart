@@ -15,5 +15,6 @@ class ItemsModel {
     required this.productPrice,
     required this.productImagePath,
     this.quantity = 1,
+  
   });
 }

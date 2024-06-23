@@ -1,3 +1,5 @@
+
+import 'package:customer_app/presentation/Buy%20Appliance%20code/screens/home.dart';
 import 'package:customer_app/presentation/Buy%20Appliance%20model/provider/addressProvider.dart';
 import 'package:customer_app/presentation/Buy%20Appliance%20model/provider/cartProvider.dart';
 import 'package:customer_app/presentation/home_page_screen/home_page_screen.dart';
@@ -46,24 +48,28 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        theme: theme,
-        title: 'customer_app',
-        debugShowCheckedModeBanner: false,
-        home: FutureBuilder<bool>(
-          future: checkLoginStatus(), // Check login status asynchronously
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              // Return the appropriate screen based on the login status
-              return snapshot.data == true ? HomePageScreen() : LogInOneScreen();
-            } else {
-              // Return a loading indicator or splash screen while checking login status
-              return CircularProgressIndicator();
-            }
-          },
-        ),
-        routes: AppRoutes.routes,
-      ),
-    );
+  theme: theme,
+  title: 'customer_app',
+  debugShowCheckedModeBanner: false,
+  home: FutureBuilder<bool>(
+    future: checkLoginStatus(), // Check login status asynchronously
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.done) {
+        // Return the appropriate screen based on the login status
+        return snapshot.data == true ? HomePageScreen() : LogInOneScreen();
+      } else {
+        // Return a loading indicator or splash screen while checking login status
+        return CircularProgressIndicator();
+      }
+    },
+  ),
+  routes: {
+   
+    '/homebuy': (context) => HomeScreen(),
+    // Add more routes as needed
+  },
+    ));
+  
   }
 
   Future<bool> checkLoginStatus() async {

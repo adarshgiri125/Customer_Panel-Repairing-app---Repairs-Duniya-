@@ -1,14 +1,15 @@
-// ignore_for_file: file_names
-
+import 'package:customer_app/presentation/Buy%20Appliance%20code/screens/SavedAddressScreen.dart';
+import 'package:customer_app/presentation/Buy%20Appliance%20code/widgets/commonTextField.dart';
+import 'package:customer_app/presentation/Buy%20Appliance%20code/widgets/containers/containerButton.dart';
 import 'package:customer_app/presentation/Buy%20Appliance%20model/provider/addressProvider.dart';
-import 'package:customer_app/presentation/Buy%20Appliance/screens/SavedAddressScreen.dart';
-import 'package:customer_app/presentation/Buy%20Appliance/widgets/commonTextField.dart';
-import 'package:customer_app/presentation/Buy%20Appliance/widgets/containers/containerButton.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AddressScreen extends StatefulWidget {
-  const AddressScreen({super.key});
+  final List<Map<String, dynamic>> cartItemsDetails;
+
+  const AddressScreen({Key? key, required this.cartItemsDetails})
+      : super(key: key);
 
   @override
   State<AddressScreen> createState() => _AddressScreenState();
@@ -57,9 +58,7 @@ class _AddressScreenState extends State<AddressScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   CommonTextForm(
                     controller: phoneController,
                     hintText: 'Phone',
@@ -70,9 +69,7 @@ class _AddressScreenState extends State<AddressScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   CommonTextForm(
                     controller: postalCodeController,
                     hintText: 'Postal Code',
@@ -83,9 +80,7 @@ class _AddressScreenState extends State<AddressScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   CommonTextForm(
                     controller: addressController,
                     hintText: 'Address',
@@ -96,9 +91,7 @@ class _AddressScreenState extends State<AddressScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   CommonTextForm(
                     controller: emailController,
                     hintText: 'Email',
@@ -151,20 +144,25 @@ class _AddressScreenState extends State<AddressScreen> {
                 ],
               ),
 
-              // In this container button developer has to the details to Firebase.
-              //I just take random using provider just for the testing purpose
-
+              // Save & Proceed Button
               ContainerButton(
                 onTap: () {
                   if (_formKey.currentState?.validate() ?? false) {
-                    // Get the selected address type
                     String addressType = isSelected[0]
                         ? 'Home'
                         : isSelected[1]
                             ? 'Office'
                             : 'Others';
 
-                    // Save address data using Provider
+                    Map<String, dynamic> userDetails = {
+                      'name': nameController.text,
+                      'phone': phoneController.text,
+                      'email': emailController.text,
+                      'postalCode': postalCodeController.text,
+                      'address': addressController.text,
+                      'addressType': addressType,
+                    };
+
                     Provider.of<AddressProvider>(context, listen: false)
                         .saveAddress(
                       address: addressController.text,
@@ -175,11 +173,14 @@ class _AddressScreenState extends State<AddressScreen> {
                       type: addressType,
                     );
 
-                    // Navigate to the saved address screen
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const SavedAddressScreen()),
+                        builder: (context) => SavedAddressScreen(
+                          cartItemsDetails: widget.cartItemsDetails,
+                          userDetails: userDetails,
+                        ),
+                      ),
                     );
                   }
                 },

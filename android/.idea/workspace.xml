@@ -4,19 +4,31 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="73f64cd8-b466-4451-9ebf-7e46493165b2" name="Changes" comment="">
+    <list default="true" id="e824eb55-41ab-4b00-9650-a1ee9b996f8e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../PlayStoreData/private_key.pepk" beforeDir="false" afterPath="$PROJECT_DIR$/../PlayStoreData/private_key.pepk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/Backened Part/sendNotification.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/Backened Part/sendNotification.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/ServiceDetails/service_repair_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/ServiceDetails/service_repair_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance model/class/itemModel.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/Buy Appliance model/class/itemModel.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance model/lists/ItemsCatelog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/Buy Appliance model/lists/ItemsCatelog.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance model/provider/cartProvider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/Buy Appliance model/provider/cartProvider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance model/services/toastService.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/Buy Appliance model/services/toastService.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/screens/SavedAddressScreen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/screens/addressScreen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/screens/allProducts.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/screens/cart.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/screens/home.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/screens/orderConfirmScreen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/screens/paymentModeScreen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/screens/productDetails.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/screens/trackOrder.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/widgets/ListContainer.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/widgets/appBar.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/widgets/commonButton.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/widgets/commonTextField.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/presentation/Buy Appliance/widgets/containers/containerButton.dart" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../lib/presentation/home_page_screen/home_page_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/home_page_screen/home_page_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lib/presentation/item_list/list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/item_list/list.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/myBooking/mybooking.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/myBooking/mybooking.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/select_address_screen/select_address_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/select_address_screen/select_address_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/select_address_screen/sendData_Firebase.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/select_address_screen/sendData_Firebase.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/presentation/user profile/profile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/presentation/user profile/profile.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -33,13 +45,13 @@
   <component name="GenerateSignedApkSettings">
     <option name="EXPORT_PRIVATE_KEY" value="false" />
     <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/../PlayStoreData/Untitled.jks" />
-    <option name="KEY_ALIAS" value="key0" />
+    <option name="KEY_ALIAS" value="Key0" />
     <option name="REMEMBER_PASSWORDS" value="true" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectId" id="2h0QSgNSzfFpHXOHbTPnjtBzU5R" />
+  <component name="ProjectId" id="2hs76Zeb81CgPZurKVkdk9lUxVi" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -132,11 +144,11 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="73f64cd8-b466-4451-9ebf-7e46493165b2" name="Changes" comment="" />
-      <created>1716728515782</created>
+      <changelist id="e824eb55-41ab-4b00-9650-a1ee9b996f8e" name="Changes" comment="" />
+      <created>1718370757147</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1716728515782</updated>
+      <updated>1718370757147</updated>
     </task>
     <servers />
   </component>

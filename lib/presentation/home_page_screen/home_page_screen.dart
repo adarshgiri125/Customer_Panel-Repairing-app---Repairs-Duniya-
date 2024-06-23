@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app%20state/app_state.dart';
 import 'package:customer_app/app%20state/serviceDetails.dart';
 import 'package:customer_app/presentation/Backened%20Part/Notification.dart';
 import 'package:customer_app/presentation/Backened%20Part/getNotification.dart';
-import 'package:customer_app/presentation/Buy%20Appliance/screens/home.dart';
+import 'package:customer_app/presentation/Buy%20Appliance%20model/lists/itemcatalog.dart';
+import 'package:customer_app/presentation/Buy%20Appliance%20code/screens/home.dart';
 import 'package:customer_app/presentation/customer_Rating/customer_rating.dart';
 import 'package:customer_app/presentation/home_page_screen/getNumber.dart';
 import 'package:customer_app/presentation/item_list/list.dart';
@@ -13,13 +16,16 @@ import 'package:customer_app/presentation/ServiceDetails/service_repair_screen.d
 import 'package:customer_app/presentation/log_in_two_screen/log_in_two_screen.dart';
 import 'package:customer_app/presentation/searchService/DetailsPage.dart';
 import 'package:customer_app/presentation/user%20profile/profile.dart';
+import 'package:customer_app/toast/toast.dart';
 import 'package:customer_app/widgets/app_bar/appbar_menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../home_page_screen/widgets/homepagestaggered_item_widget.dart';
 import 'package:customer_app/core/app_export.dart';
@@ -28,6 +34,8 @@ import 'package:customer_app/widgets/custom_search_view.dart';
 import 'package:customer_app/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as path;
 
 class HomePageScreen extends StatefulWidget {
   HomePageScreen({Key? key}) : super(key: key);
@@ -63,6 +71,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     super.initState();
     showHalfPage = false;
     showLocation = false;
+    // addItemExample();
 
     _auth.authStateChanges().listen((User? user) {
       setState(() {
@@ -79,15 +88,11 @@ class _HomePageScreenState extends State<HomePageScreen> {
           return;
         }
 
-        // Perform actions dependent on user authentication here
         userID = user!.uid;
         _fetchUnratedServices(userID);
         PushNotificationSystem notificationSystem = PushNotificationSystem();
         notificationSystem.whenNotificationReceived(context);
         _getCurrentLocation();
-
-        // Now that userID is updated, you can print it here
-        print("check2 : $userID");
       });
     });
 
@@ -95,8 +100,74 @@ class _HomePageScreenState extends State<HomePageScreen> {
     setupDeviceToken();
   }
 
+  void addItemExample() async {
+    try {
+      // Copy the asset to the local file system
+      File imageFile = await getLocalFileFromAsset('assets/images/remote.jpg');
+      String imageName = path.basename(imageFile.path);
+
+      // Upload the image and get the URL
+      String imageUrl = await uploadImage(imageFile, imageName);
+      print("Image URL: $imageUrl");
+
+      // Create the item model
+      ItemsModel item = ItemsModel(
+        productId: '2',
+        productPrice: 150,
+        productImagePath: imageUrl,
+        productName: 'Remote',
+        available: true,
+      );
+
+      // Add the item to Firestore
+      await addItemToFirestore(item);
+      print("Item added to Firestore");
+    } catch (e) {
+      print('Error adding item: $e');
+    }
+  }
+
+  Future<File> getLocalFileFromAsset(String assetPath) async {
+    final byteData = await rootBundle.load(assetPath);
+    final file = File(
+        '${(await getTemporaryDirectory()).path}/${path.basename(assetPath)}');
+    await file.writeAsBytes(byteData.buffer.asUint8List());
+    return file;
+  }
+
+  Future<String> uploadImage(File imageFile, String imageName) async {
+    try {
+      // Create a reference to the location you want to upload the file
+      Reference ref =
+          FirebaseStorage.instance.ref().child('ApplianceImages/$imageName');
+      print("Starting upload for $imageName");
+
+      // Upload the file
+      UploadTask uploadTask = ref.putFile(imageFile);
+
+      // Wait until the upload completes
+      TaskSnapshot snapshot = await uploadTask;
+      print("Upload complete for $imageName");
+
+      // Get the download URL
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      print("Download URL: $downloadUrl");
+
+      return downloadUrl;
+    } catch (e) {
+      print('Error occurred during upload: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> addItemToFirestore(ItemsModel item) async {
+    CollectionReference itemsCatalog =
+        FirebaseFirestore.instance.collection('itemsCatalog');
+
+    await itemsCatalog.add(item.toJson());
+  }
+
   Future<void> _fetchUnratedServices(String user) async {
-    print("check3 : $user");
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('customers')
@@ -106,7 +177,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
           .where('rating', isEqualTo: false)
           .limit(1) // Limit to only fetch the first unrated service
           .get();
-      print("hy");
+
       if (querySnapshot.docs.isNotEmpty) {
         DocumentSnapshot firstService = querySnapshot.docs.first;
         String technicianNumber = firstService['userPhoneNumber'];
@@ -382,7 +453,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
                   SizedBox(height: 33),
 
-                  _buildHomePageRow(context),
+                  // _buildHomePageRow(context),
                   SizedBox(height: 10),
 
                   Padding(
@@ -632,21 +703,85 @@ class _HomePageScreenState extends State<HomePageScreen> {
   }
 
   Widget _buildHomePageRow2(BuildContext context) {
+    TextEditingController pincodeController = TextEditingController();
+
+    Future<bool> validatePincode(String pincode) async {
+      List<String> validPincodes = ['516001', '516002', '516003', '516004'];
+      return validPincodes.contains(pincode);
+    }
+
+    void showPincodeDialog() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Enter Your Area Code'),
+            content: TextField(
+              controller: pincodeController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hintText: 'Enter your pincode',
+              ),
+              style: TextStyle(
+                  color: Colors.black), // Ensuring the input text is black
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: Colors.red),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text(
+                  'Submit',
+                  style: TextStyle(color: Colors.black),
+                ),
+                onPressed: () async {
+                  String enteredPincode = pincodeController.text;
+                  bool isValid = await validatePincode(enteredPincode);
+                  if (isValid) {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomeScreen(),
+                      ),
+                    );
+                  } else {
+                    Navigator.of(context).pop();
+                    ToastService.sendAlert(
+                      context: context,
+                      message: "Not available in your location",
+                      toastStatus: "ERROR",
+                    );
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Align(
       alignment: Alignment.center,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 25.h),
+        margin: EdgeInsets.symmetric(horizontal: 20.h),
         decoration: AppDecoration.gradientOrangeAToErrorContainer.copyWith(
           borderRadius: BorderRadiusStyle.roundedBorder10,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: EdgeInsets.only(
-                left: 17.h,
+                left: 20.h,
                 top: 35.v,
                 bottom: 20.v,
               ),
@@ -662,7 +797,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                     width: 174.h,
                     child: Text(
                       "BUY HOME APPLIANCES IN MINIMUM COST",
-                      maxLines: 2,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: CustomTextStyles.bodyMediumGray50.copyWith(
                         height: 1.50,
@@ -673,32 +808,19 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   CustomElevatedButton(
                     height: 44.v,
                     width: 156.h,
-                    text: "BUY",
+                    text: "BUY NOW",
                     buttonStyle: CustomButtonStyles.none,
                     decoration: CustomButtonStyles
                         .gradientPrimaryToOnErrorContainerDecoration,
-                    onPressed: () {
-                      // Add your on-press action here
-                      print("Button pressed!");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
-                        ),
-                      );
-                      // You can also call other methods or perform actions as needed
-                    },
+                    onPressed: showPincodeDialog,
                   ),
                 ],
               ),
             ),
-
-            // Added a small space between the text and the image
             CustomImageView(
               imagePath: ImageConstant.imgImage52,
               height: 223.v,
-              width: 123.h,
-              // margin: EdgeInsets.only(left: 2.h), // Removed the margin
+              width: 195.h,
             ),
           ],
         ),

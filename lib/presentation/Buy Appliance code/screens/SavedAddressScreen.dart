@@ -2,12 +2,19 @@
 
 import 'package:customer_app/presentation/Buy%20Appliance%20model/provider/addressProvider.dart';
 import 'package:customer_app/presentation/Buy%20Appliance%20model/provider/cartProvider.dart';
-import 'package:customer_app/presentation/Buy%20Appliance/screens/paymentModeScreen.dart';
+import 'package:customer_app/presentation/Buy%20Appliance%20code/screens/paymentModeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SavedAddressScreen extends StatelessWidget {
-  const SavedAddressScreen({super.key});
+  final List<Map<String, dynamic>> cartItemsDetails;
+  final Map<String, dynamic> userDetails;
+
+  const SavedAddressScreen({
+    Key? key,
+    required this.cartItemsDetails,
+    required this.userDetails,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -149,10 +156,13 @@ class SavedAddressScreen extends StatelessWidget {
                       minimumSize: const Size(double.infinity, 50),
                     ),
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const PaymentModeScreen()),
+                            builder: (context) => PaymentModeScreen(
+                                  cartItemsDetails: cartItemsDetails,
+                                  userDetails: userDetails,
+                                )),
                       );
                     },
                     child: const Text(

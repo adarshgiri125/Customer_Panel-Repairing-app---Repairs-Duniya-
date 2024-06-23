@@ -19,10 +19,10 @@ List<Map<String, dynamic>> otheritems = [
   {"imagePath": ImageConstant.electrician, "itemName": "Electrician"},
   {"imagePath": ImageConstant.plumber, "itemName": "Plumber"},
   // {"imagePath": ImageConstant.painter, "itemName": "Painter"},
-  {
-    "imagePath": ImageConstant.construction,
-    "itemName": "Construction/Renovation"
-  },
+  // {
+  //   "imagePath": ImageConstant.construction,
+  //   "itemName": "Construction/Renovation"
+  // },
 ];
 
 // {"imagePath": ImageConstant.painter, "itemName": "Painter"},
@@ -30,10 +30,10 @@ List<Map<String, dynamic>> otheritems = [
 List<Map<String, dynamic>> confirmation = [
   {"imagePath": ImageConstant.electrician, "itemName": "Electrician"},
   {"imagePath": ImageConstant.plumber, "itemName": "Plumber"},
-  {
-    "imagePath": ImageConstant.construction,
-    "itemName": "Construction/Renovation"
-  },
+  // {
+  //   "imagePath": ImageConstant.construction,
+  //   "itemName": "Construction/Renovation"
+  // },
 ];
 
 List<dynamic> Saloon = [
